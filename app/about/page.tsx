@@ -5,7 +5,7 @@ import { VscWorkspaceTrusted } from "react-icons/vsc";
 
 const Aboutpage = () => {
     return (
-        <section className="my-10 max-w-[80%] m-auto">
+        <section className="mt-20 mb-10 max-w-[80%] m-auto">
             <div className="container flex flex-col items-center gap-6">
                 <div className="flex flex-col items-center px-4 py-2 gap-4">
                     <h1 className="main-heading">About FoodSpot</h1>

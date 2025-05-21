@@ -1,18 +1,27 @@
 @import "tailwindcss";
 
 .heading-client{
-  @apply text-2xl font-bold
+  @apply text-3xl font-bold
+}
+
+.description-heading-client{
+  @apply text-justify
+}
+
+.main-heading{
+  @apply text-5xl font-semibold
+}
+
+.sub-heading{
+  @apply text-2xl font-semibold
 }
 .container{
   max-width: 1240px;
   padding: 0 20px;
-  width: 100%;
   margin: 0 auto;
+  width: 100%;
+  
 }
-.sub-heading-client{
-  @apply text-xl font-semibold
-}
-
 @theme{
   --breakpoint-mobile: 30rem;       /* 480px */
   --breakpoint-tablet: 48rem;       /* 768px */
