@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+.heading-client{
+  @apply text-2xl font-bold
+}
+.container{
+  max-width: 1240px;
+  padding: 0 20px;
+  width: 100%;
+  margin: 0 auto;
+}
+.sub-heading-client{
+  @apply text-xl font-semibold
+}
+
+@theme{
+  --breakpoint-mobile: 30rem;       /* 480px */
+  --breakpoint-tablet: 48rem;       /* 768px */
+  --breakpoint-laptop: 64rem;       /* 1024px */
+  --breakpoint-desktop: 80rem;      /* 1280px */
+  --breakpoint-large-desktop: 96rem; /* 1536px */
+}
+@keyframes slideIn {
+  from {
+    transform: translateX(50%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(50%);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(0%);
+    opacity: 0;
+  }
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-in-out backwards;
+}
+
+.slide-out {
+  animation: slideOut 0.3s ease-in-out backwards;
+}
