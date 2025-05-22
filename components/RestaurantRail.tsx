@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import RestaurantCard, { RestaurantProps } from "./RestaurantCart";
+import RestaurantCard, { RestaurantProps } from "./RestaurantCard";
 
 type Props = {
   restaurants: RestaurantProps[];
