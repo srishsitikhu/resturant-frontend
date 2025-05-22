@@ -16,9 +16,7 @@
   @apply text-2xl font-semibold
 }
 .container{
-  @apply px-[20px] w-full;
-
-  
+  @apply  mx-auto px-[20px]
 }
 @theme{
   --breakpoint-mobile: 30rem;       /* 480px */

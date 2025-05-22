@@ -75,7 +75,7 @@ const Navbar = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-30 transition-all duration-300 ${
+      className={`fixed top-0 right-0 z-30 w-screen transition-all duration-300 ${
         isScrolled || isMenuOpen
           ? "bg-white shadow-md py-2"
           : "bg-transparent py-4"
@@ -83,15 +83,13 @@ const Navbar = () => {
     >
       <div className="container">
         <nav className="flex justify-between items-center">
-          <div className="logo">
-            <Link
-              href="/"
-              className="items-center text-xl font-bold flex text-[#d97708]"
-            >
-              <CiForkAndKnife />
-              <span>FootSpot</span>
-            </Link>
-          </div>
+          <Link
+            href="/"
+            className="items-center gap-2 text-xl font-bold flex text-[#d97708]"
+          >
+            <CiForkAndKnife />
+            <span>FootSpot</span>
+          </Link>
           <div className="nav-wrap">
             <FaHamburger
               onClick={() => {
@@ -130,7 +128,7 @@ const Navbar = () => {
                     className={`hover:text-[#d97708] transition-all duration-300 ease-in-out ${isActive(
                       "/auth/login"
                     )}`}
-                    onClick={() => router.push("/login")}
+                    onClick={() => router.push("/auth/login")}
                   >
                     Sign In
                   </li>
@@ -138,9 +136,9 @@ const Navbar = () => {
                     className={`hover:text-[#d97708] transition-all duration-300 ease-in-out ${isActive(
                       "/auth/register"
                     )}`}
-                    onClick={() => router.push("/Sign Up")}
+                    onClick={() => router.push("/auth/register")}
                   >
-                    Sign Out
+                    Sign Up
                   </li>
                 </>
               ) : (

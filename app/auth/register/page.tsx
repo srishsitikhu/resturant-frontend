@@ -22,7 +22,8 @@ const RegisterPage = () => {
     setError,
     formState: { errors },
     handleSubmit,
-  } = useForm();
+    watch,
+  } = useForm({ mode: "onChange" });
   const dispatch = useDispatch();
 
   const onSubmit = async (data: FieldValues) => {
@@ -116,7 +117,9 @@ const RegisterPage = () => {
           <label htmlFor="ConfirmPassword">Confirm Password</label>
           <input
             {...register("confirmPassword", {
-              required: "ConifrmPassword is required.",
+              required: "Confirm Password is required.",
+              validate: (value) =>
+                value === watch("password") || "Passwords do not match",
             })}
             type={showConfirmPassword ? "text" : "password"}
             className="border border-neutral-400 py-2 px-4 pl-10 rounded-lg"
