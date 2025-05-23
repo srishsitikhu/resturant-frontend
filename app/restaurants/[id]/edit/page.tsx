@@ -4,10 +4,13 @@ import { PlusCircle, MinusCircle, Upload, MenuIcon } from "lucide-react";
 import { FieldValues, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import axios from "axios";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { showNotification } from "@/redux/NotificationSlice";
+import { cuisineTypes } from "@/constantAndEnums";
+import { useQuery } from "@tanstack/react-query";
+import { RestaurantProps } from "@/components/RestaurantCard";
 
 interface TokenPayload {
   userId: string;
@@ -22,14 +25,18 @@ interface MenuItem {
   imageFile: File | null;
 }
 
-const AddPage: React.FC = () => {
+const EditPage: React.FC = () => {
+  const router = useRouter();
   const pathname = usePathname();
+  const { id } = useParams();
   const [token, setToken] = useState(false);
   const serverUrl =
     process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:4000";
   const {
     register,
     setError,
+    setValue,
+    reset,
     formState: { errors },
     handleSubmit,
     watch,
@@ -63,6 +70,44 @@ const AddPage: React.FC = () => {
       imageFile: null,
     },
   ]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!id) return;
+
+      try {
+        const res = await axios.get(`${serverUrl}/api/restaurants/${id}`);
+        const data = res.data.restaurant;
+        reset({
+          name: data.name,
+          address: data.address,
+          description: data.description,
+          cuisineType: data.cuisineType,
+        });
+        setHours(data.hours || [""]);
+        setMenuItems(
+          data?.menuItems?.map((item: any) => ({
+            ...item,
+            imageFile: null,
+          }))
+        );
+
+        if (data.imageUrl) {
+          const imageBlob = await fetch(`${serverUrl}${data.imageUrl}`).then(
+            (r) => r.blob()
+          );
+          const file = new File([imageBlob], "restaurant.jpg", {
+            type: imageBlob.type,
+          });
+          setImageFile(file);
+        }
+      } catch (err) {
+        console.error("Error fetching restaurant data", err);
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   const addHour = () => {
     setHours([...hours, ""]);
@@ -172,7 +217,7 @@ const AddPage: React.FC = () => {
       }
       const imageUrl = await uploadRestaurantImage();
       console.log(imageUrl);
-      const reponse = await axios.post(`${serverUrl}/api/restaurants`, {
+      const reponse = await axios.patch(`${serverUrl}/api/restaurants/${id}`, {
         ...data,
         imageUrl: imageUrl,
         hours: hours,
@@ -181,16 +226,18 @@ const AddPage: React.FC = () => {
       });
       dispatch(
         showNotification({
-          message: "Restaurant Created Successfully",
+          message: "Restaurant Updated Successfully",
           type: "success",
         })
       );
+      reset();
+      router.push(`/restaurant/${id}`);
       console.log(reponse);
     } catch (error) {
       console.log(error);
       dispatch(
         showNotification({
-          message: "Failed to create Restaurant",
+          message: "Failed to update Restaurant",
           type: "error",
         })
       );
@@ -207,17 +254,21 @@ const AddPage: React.FC = () => {
             <h2 className="text-xl font-semibold text-gray-700 mb-4">
               Basic Information
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex justify-between gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Restaurant Name
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Restaurant Name *
                 </label>
                 <input
                   type="text"
                   {...register("name", {
                     required: "Restaurant Name is Required",
                   })}
-                  className="input-style"
+                  className="input-style w-[400px]"
+                  id="name"
                 />
                 {errors.name && (
                   <span className="text-red-500 text-base">
@@ -226,15 +277,19 @@ const AddPage: React.FC = () => {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Address
+                <label
+                  htmlFor="address"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Address *
                 </label>
                 <input
                   type="text"
                   {...register("address", {
                     required: "Restaurant Address is Required",
                   })}
-                  className="input-style"
+                  className="input-style w-[400px]"
+                  id="address"
                 />
                 {errors.address && (
                   <span className="text-red-500 text-base">
@@ -272,9 +327,11 @@ const AddPage: React.FC = () => {
                   className="input-style w-full"
                 >
                   <option value="">Select Cuisine Type</option>
-                  <option value="indian">Indian</option>
-                  <option value="chinese">Chinese</option>
-                  <option value="nepali">Nepali</option>
+                  {cuisineTypes.map((type, index) => (
+                    <option key={index} value={type}>
+                      {type}
+                    </option>
+                  ))}
                 </select>
                 {errors.cuisineType && (
                   <span className="text-red-500 text-base">
@@ -360,63 +417,77 @@ const AddPage: React.FC = () => {
               </button>
             </div>
 
-            {menuItems.map((item, index) => (
+            {menuItems?.map((item, index) => (
               <div
                 key={index}
                 className="space-y-3 border p-4 rounded-xl bg-gray-50"
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    placeholder="e.g., Caesar Salad"
-                    className="input-style"
-                    value={item.name}
-                    onChange={(e) =>
-                      handleItemChange(index, "name", e.target.value)
-                    }
-                  />
-                  <input
-                    type="number"
-                    placeholder="Price ($)"
-                    className="input-style"
-                    value={item.price}
-                    onChange={(e) =>
-                      handleItemChange(index, "price", e.target.value)
-                    }
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="itemName">Item Name </label>
+                    <input
+                      type="text"
+                      placeholder="e.g., Caesar Salad"
+                      className="input-style"
+                      value={item.name}
+                      onChange={(e) =>
+                        handleItemChange(index, "name", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="itemName">Price</label>
+                    <input
+                      type="number"
+                      placeholder="Price ($)"
+                      className="input-style"
+                      value={item.price}
+                      onChange={(e) =>
+                        handleItemChange(index, "price", e.target.value)
+                      }
+                    />
+                  </div>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    placeholder="e.g., Appetizers"
-                    className="input-style"
-                    value={item.category}
-                    onChange={(e) =>
-                      handleItemChange(index, "category", e.target.value)
-                    }
-                  />
-                  <textarea
-                    rows={2}
-                    placeholder="Brief description"
-                    className="input-style w-full"
-                    value={item.description}
-                    onChange={(e) =>
-                      handleItemChange(index, "description", e.target.value)
-                    }
-                  />
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="itemName">Category </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input
+                      type="text"
+                      placeholder="e.g., Appetizers"
+                      className="input-style"
+                      value={item.category}
+                      onChange={(e) =>
+                        handleItemChange(index, "category", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="itemName">Item Description </label>
+                    <textarea
+                      rows={2}
+                      placeholder="Brief description"
+                      className="input-style w-full"
+                      value={item.description}
+                      onChange={(e) =>
+                        handleItemChange(index, "description", e.target.value)
+                      }
+                    />
+                  </div>
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-4 items-center">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      if (e.target.files?.[0]) {
-                        handleImageChange(index, e.target.files[0]);
-                      }
-                    }}
-                  />
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="menuImage">Menu Image</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        if (e.target.files?.[0]) {
+                          handleImageChange(index, e.target.files[0]);
+                        }
+                      }}
+                    />
+                  </div>
                   {item.imageFile && (
                     <button
                       type="button"
@@ -429,7 +500,7 @@ const AddPage: React.FC = () => {
                   )}
                   {item.imageFile && (
                     <img
-                      src={URL.createObjectURL(item.imageFile)}
+                      src={URL.createObjectURL(item.imageFile || item.imageUrl)}
                       alt="Preview"
                       className="w-20 h-20 object-cover rounded"
                     />
@@ -452,7 +523,7 @@ const AddPage: React.FC = () => {
 
           <div className="pt-6">
             <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow">
-              Submit
+              Update
             </button>
           </div>
         </form>
@@ -461,4 +532,4 @@ const AddPage: React.FC = () => {
   );
 };
 
-export default AddPage;
+export default EditPage;

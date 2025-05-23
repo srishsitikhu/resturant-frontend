@@ -37,13 +37,13 @@ const Footer = () => {
                                 <Link href='/' className="text-gray-400 hover:text-amber-500 transition-colors">Home</Link>
                             </li>
                             <li>
-                                <Link href='/restaurants/add' className="text-gray-400 hover:text-amber-500 transition-colors">Add Restaurant</Link>
+                                <Link href='/restaurant/add' className="text-gray-400 hover:text-amber-500 transition-colors">Add Restaurant</Link>
                             </li>
                             <li>
-                                <Link href='/signin' className="text-gray-400 hover:text-amber-500 transition-colors">Sign In</Link>
+                                <Link href='/auth/login' className="text-gray-400 hover:text-amber-500 transition-colors">Sign In</Link>
                             </li>
                             <li>
-                                <Link href='/signup' className="text-gray-400 hover:text-amber-500 transition-colors">Sign Up</Link>
+                                <Link href='/auth/register' className="text-gray-400 hover:text-amber-500 transition-colors">Sign Up</Link>
                             </li>
                         </ul>
                     </div>

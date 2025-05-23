@@ -1,17 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
-import ResturantCart from "./RestaurantRail";
-import products from "../assets/assets";
+import RestaurantRail from "./RestaurantRail";
+import { AllRestaurantProps } from "./RestaurantCard";
 
 const ITEMS_PER_PAGE = 4;
 
-const AllResturant = () => {
+const AllRestaurant:React.FC<AllRestaurantProps> = ({restaurants}) => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(restaurants.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentItems = products.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const currentItems = restaurants.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -28,7 +31,7 @@ const AllResturant = () => {
           </h2>
         </div>
 
-        <ResturantCart restaurants={currentItems} />
+        <RestaurantRail restaurants={currentItems} />
 
         <div className="flex justify-center items-center gap-2 mt-6">
           <button
@@ -64,4 +67,4 @@ const AllResturant = () => {
   );
 };
 
-export default AllResturant;
+export default AllRestaurant;
