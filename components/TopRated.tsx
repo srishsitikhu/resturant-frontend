@@ -1,10 +1,11 @@
+"use client"
 import React from "react";
-import ResturantCart from "./RestaurantRail";
-import products from "../assets/assets";
+import RestaurantRail from "./RestaurantRail";
+import {AllRestaurantProps } from "./RestaurantCard";
 
-const Top_rated = () => {
-  const topRatedRestaurants = [...products]
-    .sort((a, b) => b.viewCount - a.viewCount)
+const Top_rated: React.FC<AllRestaurantProps> = ({ restaurants }) => {
+  const topRatedRestaurants = [...restaurants]
+    .sort((a, b) => b.rating - a.rating)
     .slice(0, 5);
 
   return (
@@ -16,7 +17,7 @@ const Top_rated = () => {
           </h2>
         </div>
 
-        <ResturantCart restaurants={topRatedRestaurants} />
+        <RestaurantRail restaurants={topRatedRestaurants} />
       </div>
     </section>
   );

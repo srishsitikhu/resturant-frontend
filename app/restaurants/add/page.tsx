@@ -1,0 +1,489 @@
+"use client";
+import React, { useEffect, useState } from "react";
+import { PlusCircle, MinusCircle, Upload, MenuIcon } from "lucide-react";
+import { FieldValues, useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import axios from "axios";
+import { usePathname } from "next/navigation";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+import { showNotification } from "@/redux/NotificationSlice";
+import { cuisineTypes } from "@/constantAndEnums";
+
+interface TokenPayload {
+  userId: string;
+}
+
+interface MenuItem {
+  name: string;
+  price: string;
+  category: string;
+  description: string;
+  imageUrl: string;
+  imageFile: File | null;
+}
+
+const AddPage: React.FC = () => {
+  const pathname = usePathname();
+  const [token, setToken] = useState(false);
+  const serverUrl =
+    process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:4000";
+  const {
+    register,
+    setError,
+    formState: { errors },
+    handleSubmit,
+    watch,
+  } = useForm({ mode: "onChange" });
+  const dispatch = useDispatch();
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [userId, setUserId] = useState("");
+
+  useEffect(() => {
+    const storedToken = Cookies.get("token");
+    if (storedToken) {
+      setToken(true);
+      try {
+        const decoded = jwtDecode<TokenPayload>(storedToken);
+        console.log("decode", decoded.userId);
+        setUserId(decoded.userId);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [pathname]);
+
+  const [hours, setHours] = useState<string[]>([""]);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([
+    {
+      name: "",
+      price: "",
+      category: "",
+      description: "",
+      imageUrl: "",
+      imageFile: null,
+    },
+  ]);
+
+  const addHour = () => {
+    setHours([...hours, ""]);
+  };
+
+  const removeHour = (index: number) => {
+    setHours(hours.filter((_, i) => i !== index));
+  };
+
+  const handleHourChange = (index: number, value: string) => {
+    const updated = [...hours];
+    updated[index] = value;
+    setHours(updated);
+  };
+
+  const addItem = () => {
+    setMenuItems([
+      ...menuItems,
+      {
+        name: "",
+        price: "",
+        category: "",
+        description: "",
+        imageUrl: "",
+        imageFile: null,
+      },
+    ]);
+  };
+
+  const removeItem = (index: number) => {
+    setMenuItems(menuItems.filter((_, i) => i !== index));
+  };
+
+  const handleItemChange = (
+    index: number,
+    field: keyof MenuItem,
+    value: any
+  ) => {
+    const updated = [...menuItems];
+    updated[index][field] = value;
+    setMenuItems(updated);
+  };
+
+  const handleImageChange = (index: number, file: File) => {
+    const updated = [...menuItems];
+    updated[index].imageFile = file;
+    setMenuItems(updated);
+  };
+
+  const uploadImage = async (index: number) => {
+    const item = menuItems[index];
+    if (!item.imageFile) return;
+
+    const formData = new FormData();
+    formData.append("file", item.imageFile);
+
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/upload`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      const data = res.data.file;
+      console.log(res.data.file.path);
+
+      const updated = [...menuItems];
+      updated[index].imageUrl = data.path;
+      setMenuItems(updated);
+    } catch (err) {
+      console.error("Image upload failed", err);
+    }
+  };
+  const uploadRestaurantImage = async () => {
+    if (!imageFile) {
+      setError("image", { message: "Restaurant Image is Required" });
+      return;
+    }
+    try {
+      const formData = new FormData();
+      formData.append("file", imageFile);
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/upload`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      return res.data.file.path;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onSubmit = async (data: FieldValues) => {
+    try {
+      if (hours.length == 0) {
+        setError("hours", { message: "At least One hours must insert" });
+        return;
+      }
+      const imageUrl = await uploadRestaurantImage();
+      console.log(imageUrl);
+      const reponse = await axios.post(`${serverUrl}/api/restaurants`, {
+        ...data,
+        imageUrl: imageUrl,
+        hours: hours,
+        userId: Number(userId),
+        menuItems: menuItems,
+      });
+      dispatch(
+        showNotification({
+          message: "Restaurant Created Successfully",
+          type: "success",
+        })
+      );
+      console.log(reponse);
+    } catch (error) {
+      console.log(error);
+      dispatch(
+        showNotification({
+          message: "Failed to create Restaurant",
+          type: "error",
+        })
+      );
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-6">
+      <div className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-lg space-y-10">
+        <h1 className="text-3xl font-bold text-gray-800">Add New Restaurant</h1>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-700 mb-4">
+              Basic Information
+            </h2>
+            <div className="flex justify-between gap-6">
+              <div>
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Restaurant Name *
+                </label>
+                <input
+                  type="text"
+                  {...register("name", {
+                    required: "Restaurant Name is Required",
+                  })}
+                  className="input-style w-[400px]"
+                  id="name"
+                />
+                {errors.name && (
+                  <span className="text-red-500 text-base">
+                    {String(errors?.name?.message)}
+                  </span>
+                )}
+              </div>
+              <div>
+                <label
+                  htmlFor="address"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Address *
+                </label>
+                <input
+                  type="text"
+                  {...register("address", {
+                    required: "Restaurant Address is Required",
+                  })}
+                  className="input-style w-[400px]"
+                  id="address"
+                />
+                {errors.address && (
+                  <span className="text-red-500 text-base">
+                    {String(errors?.address?.message)}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Description
+              </label>
+              <textarea
+                {...register("description", {
+                  required: "Restaurant Description is Required",
+                })}
+                rows={4}
+                className="input-style w-full"
+              />
+              {errors.description && (
+                <span className="text-red-500 text-base">
+                  {String(errors?.description?.message)}
+                </span>
+              )}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Cuisine Type
+                </label>
+                <select
+                  {...register("cuisineType", {
+                    required: "Cuisine Type is Required",
+                  })}
+                  className="input-style w-full"
+                >
+                  <option value="">Select Cuisine Type</option>
+                  {cuisineTypes.map((type, index) => (
+                    <option key={index} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+                {errors.cuisineType && (
+                  <span className="text-red-500 text-base">
+                    {String(errors?.cuisineType?.message)}
+                  </span>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Restaurant Image
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    if (e.target.files?.[0]) {
+                      setImageFile(e.target.files[0]);
+                    }
+                  }}
+                  className="mt-2 w-full"
+                />
+                {imageFile && (
+                  <img
+                    src={URL.createObjectURL(imageFile)}
+                    alt="Preview"
+                    className="w-20 h-20 object-cover rounded"
+                  />
+                )}
+                {errors.image && (
+                  <span className="text-red-500 text-base">
+                    {String(errors?.image?.message)}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-semibold text-gray-800">
+                Opening Hours
+              </h2>
+              <button
+                type="button"
+                onClick={addHour}
+                className="text-blue-600 flex items-center"
+              >
+                <PlusCircle className="mr-1" size={18} /> Add Hours
+              </button>
+            </div>
+            {hours.map((entry, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <input
+                  type="text"
+                  placeholder="e.g., Monday to Friday 9-5"
+                  className="input-style flex-1"
+                  value={entry}
+                  onChange={(e) => handleHourChange(index, e.target.value)}
+                />
+                {hours.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeHour(index)}
+                    className="text-red-500"
+                  >
+                    <MinusCircle size={18} />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-semibold text-gray-800">
+                Menu Items
+              </h2>
+              <button
+                type="button"
+                onClick={addItem}
+                className="text-blue-600 flex items-center"
+              >
+                <PlusCircle className="mr-1" size={18} /> Add Item
+              </button>
+            </div>
+
+            {menuItems.map((item, index) => (
+              <div
+                key={index}
+                className="space-y-3 border p-4 rounded-xl bg-gray-50"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="itemName">Item Name </label>
+                    <input
+                      type="text"
+                      placeholder="e.g., Caesar Salad"
+                      className="input-style"
+                      value={item.name}
+                      onChange={(e) =>
+                        handleItemChange(index, "name", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="itemName">Price</label>
+                    <input
+                      type="number"
+                      placeholder="Price ($)"
+                      className="input-style"
+                      value={item.price}
+                      onChange={(e) =>
+                        handleItemChange(index, "price", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="itemName">Category </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input
+                      type="text"
+                      placeholder="e.g., Appetizers"
+                      className="input-style"
+                      value={item.category}
+                      onChange={(e) =>
+                        handleItemChange(index, "category", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="itemName">Item Description </label>
+                    <textarea
+                      rows={2}
+                      placeholder="Brief description"
+                      className="input-style w-full"
+                      value={item.description}
+                      onChange={(e) =>
+                        handleItemChange(index, "description", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col md:flex-row gap-4 items-center">
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="menuImage">Menu Image</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        if (e.target.files?.[0]) {
+                          handleImageChange(index, e.target.files[0]);
+                        }
+                      }}
+                    />
+                  </div>
+                  {item.imageFile && (
+                    <button
+                      type="button"
+                      onClick={() => uploadImage(index)}
+                      className="text-green-600 flex items-center"
+                    >
+                      <Upload size={18} className="mr-1" />
+                      Upload Image
+                    </button>
+                  )}
+                  {item.imageFile && (
+                    <img
+                      src={URL.createObjectURL(item.imageFile)}
+                      alt="Preview"
+                      className="w-20 h-20 object-cover rounded"
+                    />
+                  )}
+                </div>
+
+                {menuItems.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeItem(index)}
+                    className="text-red-500 flex items-center"
+                  >
+                    <MinusCircle size={18} />{" "}
+                    <span className="ml-1">Remove</span>
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="pt-6">
+            <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow">
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default AddPage;

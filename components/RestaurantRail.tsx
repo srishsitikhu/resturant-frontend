@@ -10,7 +10,7 @@ type Props = {
 const RestaurantRail: React.FC<Props> = ({ restaurants }) => {
   return (
     <div className="grid grid-cols-2 gap-2 laptop:grid-cols-4 laptop:gap-6">
-      {restaurants.map((resto, index) => (
+      {restaurants?.map((resto, index) => (
         <RestaurantCard key={index} resto={resto} />
       ))}
     </div>

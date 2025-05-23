@@ -1,31 +1,33 @@
+"use client"
 import React from "react";
-import ResturantCart from "../components/RestaurantRail";
-import Top_rated from "@/components/Top_rated";
+import TopRated from "@/components/TopRated";
 import Banner from "@/components/Banner";
-import All_restudent from "@/components/AllResturant";
-import Featured_Cuisines from "@/components/Featured_Cuisines";
+import FeaturedCuisines from "@/components/FeaturedCuisines";
+import AllRestaurant from "@/components/AllRestaurant";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import { RestaurantProps } from "../components/RestaurantCard";
 
 const page = () => {
+  const fetchRestaurants = async () => {
+    const {data} = await axios.get(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/restaurants`
+    );console.log(data.restaurants)
+    return data.restaurants || [];
+  };
+  const { data: restaurants } = useQuery<RestaurantProps[]>({
+    queryKey: ["restaurants"],
+    queryFn: fetchRestaurants,
+  });
   return (
     <main>
       <Banner />
-      <Top_rated />
-      <Featured_Cuisines />
-      <All_restudent />
+      {restaurants && <TopRated restaurants={restaurants} />}
+      {restaurants && <FeaturedCuisines restaurants={restaurants} />}
+      {restaurants && <AllRestaurant restaurants={restaurants} />}
+
     </main>
 
-    // <div className="my-15">
-    //     <div>
-    //         <h1 className="heading-client">Top Resturants</h1>
-    //         <ResturantCart restaurants={populars} />
-    //     </div>
-    //     <div>
-    //         <h1 className="heading-client">Featured Cuisines</h1>
-    //         <div>{(populars.caterory)}
-    //             <ResturantCart restaurants={populars} />
-    //         </div>
-    //     </div>
-    // </div>
   );
 };
 

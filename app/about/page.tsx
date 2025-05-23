@@ -9,7 +9,7 @@ const Aboutpage = () => {
             <div className="container flex flex-col items-center gap-6">
                 <div className="flex flex-col items-center px-4 py-2 gap-4">
                     <h1 className="main-heading">About FoodSpot</h1>
-                    <h2>Connecting food lovers with their next favorite resturant</h2>
+                    <h2>Connecting food lovers with their next favorite restaurant</h2>
                 </div>
                 <div className="shadow-xl px-8 py-4 flex flex-col gap-4">
                     <h2 className="heading-client">Our Mission</h2>

@@ -1,5 +1,6 @@
+"use client"
 import React from "react";
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { FaRegClock } from "react-icons/fa";
 import { AiOutlineGlobal } from "react-icons/ai";
 import { MdOutlinePhone } from "react-icons/md";
@@ -7,27 +8,25 @@ import { FiMapPin } from "react-icons/fi";
 import Link from "next/link";
 import Review from "../../../components/Review";
 import MenuSection from "../../../components/MenuSection";
-import products from "../../../assets/assets";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import { RestaurantProps } from "@/components/RestaurantCard";
 
-interface Props {
-  params: { slug: string };
-  searchParams: { id?: string };
-}
 
-const Page = ({ searchParams }: Props) => {
-  const restro = {
-    name: "Burger Joint",
-    rating: 4.5,
-    type: "popular",
-    category: "American",
-    country: "USA",
-    description: "Gourmet burgers made with locally sourced ingredients.",
-    address: "789 Oak St",
-    hours: "11:00 AM – 11:00 PM",
-    imageUrl:
-      "https://images.pexels.com/photos/1633578/pexels-photo-1633578.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    viewCount: 1024,
+const Page = () => {
+ 
+  const {id} = useParams()
+  const fetchRestaurant = async () => {
+    const { data } = await axios.get(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/restaurants/${id}`
+    );
+    console.log(data.restaurant);
+    return data.restaurant || null;
   };
+  const { data: restaurant } = useQuery<RestaurantProps>({
+    queryKey: ["restaurant",id],
+    queryFn: fetchRestaurant,
+  });
 
   return (
     <section className="pt-20 pb-10">
@@ -36,21 +35,21 @@ const Page = ({ searchParams }: Props) => {
           <div className="rounded-lg bg-white shadow-md overflow-hidden">
             <div className="relative h-64 md:h-80">
               <img
-                src={restro.imageUrl}
-                alt={restro.name}
+                src={`${process.env.NEXT_PUBLIC_SERVER_URL}${restaurant?.imageUrl}`}
+                alt={restaurant?.name}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               <div className="absolute bottom-0 left-0 p-6 text-white">
                 <div className="flex items-center mb-2">
                   <span className="px-2 py-1 bg-amber-600 text-xs font-bold rounded">
-                    {restro.category}
+                    {restaurant?.cuisineType}
                   </span>
                 </div>
-                <h1 className="text-3xl font-bold mb-2">{restro.name}</h1>
+                <h1 className="text-3xl font-bold mb-2">{restaurant?.name}</h1>
                 <div className="flex items-center">
                   <span className="ml-2">
-                    {restro.rating} ({restro.viewCount} reviews)
+                    {restaurant?.rating} ({restaurant?.viewCount} reviews)
                   </span>
                 </div>
               </div>
@@ -62,11 +61,13 @@ const Page = ({ searchParams }: Props) => {
                 {/* About */}
                 <div className="md:col-span-2">
                   <h2 className="text-xl font-semibold mb-4">About</h2>
-                  <p className="text-gray-700 mb-6">{restro.description}</p>
+                  <p className="text-gray-700 mb-6">
+                    {restaurant?.description}
+                  </p>
                   <div className="space-y-3">
                     <div className="flex items-start gap-3">
                       <FiMapPin className="text-amber-500" />
-                      <span>{restro.address}</span>
+                      <span>{restaurant?.address}</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <MdOutlinePhone className="text-amber-500" />
@@ -85,7 +86,7 @@ const Page = ({ searchParams }: Props) => {
                         target="_blank"
                         className="text-amber-600 hover:underline"
                       >
-                        www.example.com
+                        www.{restaurant?.name}.com
                       </Link>
                     </div>
                   </div>
@@ -95,11 +96,15 @@ const Page = ({ searchParams }: Props) => {
                 <div>
                   <h2 className="text-xl font-semibold mb-4">Opening Hours</h2>
                   <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <FaRegClock className="text-amber-500" />
-                      <div>
-                        <p className="font-medium">Monday - Sunday</p>
-                        <p className="text-gray-600">{restro.hours}</p>
+                    <div className="flex gap-3">
+                      <FaRegClock className="text-amber-500 mt-2" />
+                      <div> 
+                        <div className="flex flex-col gap-1">
+                          {Array.isArray(restaurant?.hours) &&
+                            restaurant?.hours.map((hour, index) => (
+                              <div key={index}>{hour}</div>
+                            ))}
+                        </div>
                       </div>
                     </div>
                   </div>
