@@ -11,6 +11,8 @@ import { showNotification } from "@/redux/NotificationSlice";
 import { cuisineTypes } from "@/constantAndEnums";
 import { useQuery } from "@tanstack/react-query";
 import { RestaurantProps } from "@/components/RestaurantCard";
+import AddRating from "@/components/AddRating";
+
 
 interface TokenPayload {
   userId: string;
@@ -80,7 +82,7 @@ const EditPage: React.FC = () => {
         const data = res.data.restaurant;
         reset({
           name: data.name,
-          address: data.address,
+          location: data.location,
           description: data.description,
           cuisineType: data.cuisineType,
         });
@@ -223,6 +225,7 @@ const EditPage: React.FC = () => {
         hours: hours,
         userId: Number(userId),
         menuItems: menuItems,
+        rating: rating,
       });
       dispatch(
         showNotification({
@@ -243,6 +246,7 @@ const EditPage: React.FC = () => {
       );
     }
   };
+  const [rating, setRating] = useState<number>(0);
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -278,22 +282,22 @@ const EditPage: React.FC = () => {
               </div>
               <div>
                 <label
-                  htmlFor="address"
+                  htmlFor="location"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Address *
+                  location *
                 </label>
                 <input
                   type="text"
-                  {...register("address", {
-                    required: "Restaurant Address is Required",
+                  {...register("location", {
+                    required: "Restaurant location is Required",
                   })}
                   className="input-style w-[400px]"
-                  id="address"
+                  id="location"
                 />
-                {errors.address && (
+                {errors.location && (
                   <span className="text-red-500 text-base">
-                    {String(errors?.address?.message)}
+                    {String(errors?.location?.message)}
                   </span>
                 )}
               </div>
@@ -314,6 +318,12 @@ const EditPage: React.FC = () => {
                   {String(errors?.description?.message)}
                 </span>
               )}
+            </div>
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Rating (1-5)
+              </label>
+              <AddRating rating={rating} onChange={(val) => setRating(val)} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
               <div>

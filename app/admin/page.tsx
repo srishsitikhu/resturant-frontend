@@ -39,7 +39,7 @@ const LoginPage = () => {
         localStorage.setItem("token", response.data.token);
         document.cookie = `token=${response.data.token}; path=/;`;
       }
-      router.push("/");
+      router.push("/admin/users");
     } catch (error: any) {
       dispatch(
         showNotification({
@@ -103,18 +103,9 @@ const LoginPage = () => {
 
           <RiLockPasswordLine size={20} className="absolute top-9 left-3" />
         </div>
-        <button className="bg-[#d97708] text-neutral-200 py-4 rounded-lg text-xl">
+        <button className="bg-lime-800    text-neutral-200 py-4 rounded-lg text-xl">
           Sign In
         </button>
-        <p className="text-center px-4 py-2">
-          Don't have an account?
-          <span
-            className="text-[#d97708] cursor-pointer"
-            onClick={() => router.push("/auth/register")}
-          >
-            Sign up
-          </span>
-        </p>
       </form>
     </section>
   );

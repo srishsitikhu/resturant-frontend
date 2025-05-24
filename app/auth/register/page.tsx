@@ -72,13 +72,13 @@ const RegisterPage = () => {
           <MdOutlineAccountCircle size={20} className="absolute top-9 left-3" />
         </div>
         <div className="relative flex flex-col">
-          <label htmlFor="Email Address">Email Address</label>
+          <label htmlFor="Email location">Email location</label>
           <input
             {...register("email", {
               required: "Email is required.",
               pattern: {
                 value: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
-                message: "Invalid email address",
+                message: "Invalid email location",
               },
             })}
             type="text"

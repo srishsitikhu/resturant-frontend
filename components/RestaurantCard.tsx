@@ -11,18 +11,24 @@ export type RestaurantProps = {
   rating: number;
   cuisineType: string;
   description: string;
-  address: string;
+  location: string;
   hours: string[];
   imageUrl: string;
   viewCount: number;
   userId: number;
   createdAt: Date;
   updatedAt: Date;
+  menuItems: {
+    name: string;
+    description: string;
+    imageUrl: string;
+    price: string;
+  }[];
 };
-export type AllRestaurantProps = {
-  restaurants : RestaurantProps[];
-}
 
+export type AllRestaurantProps = {
+  restaurants: RestaurantProps[];
+};
 
 const RestaurantCard: React.FC<{ resto: RestaurantProps }> = ({ resto }) => {
   const router = useRouter();
@@ -52,14 +58,13 @@ const RestaurantCard: React.FC<{ resto: RestaurantProps }> = ({ resto }) => {
         </p>
         <div className="flex gap-2 text-sm text-gray-600 mb-1">
           <CiLocationOn className="mr-1" />
-          {resto.address}
+          {resto.location}
         </div>
         <div className="flex gap-2 text-sm text-gray-600">
           <CiTimer className="justify-start" />
           <div className="flex flex-col gap-1">
-            {Array.isArray(resto.hours)&&resto.hours.map((hour, index) => (
-              <div key={index}>{hour}</div>
-            ))}
+            {Array.isArray(resto.hours) &&
+              resto.hours.map((hour, index) => <div key={index}>{hour}</div>)}
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@ import React from "react";
 import RestaurantRail from "./RestaurantRail";
 import {AllRestaurantProps } from "./RestaurantCard";
 
-const Top_rated: React.FC<AllRestaurantProps> = ({ restaurants }) => {
+const TopRated: React.FC<AllRestaurantProps> = ({ restaurants }) => {
   const topRatedRestaurants = [...restaurants]
     .sort((a, b) => b.rating - a.rating)
     .slice(0, 5);
@@ -23,4 +23,4 @@ const Top_rated: React.FC<AllRestaurantProps> = ({ restaurants }) => {
   );
 };
 
-export default Top_rated;
+export default TopRated;

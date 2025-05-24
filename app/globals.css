@@ -4,6 +4,10 @@
   @apply text-3xl font-bold
 }
 
+.bg-admin{
+  @apply bg-lime-800 
+}
+
 .description-heading-client{
   @apply text-justify
 }

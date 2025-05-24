@@ -22,7 +22,7 @@ const Navbar = () => {
   const router = useRouter();
   const [token, setToken] = useState(false);
   const pathname = usePathname();
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  // const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isActive = (path: string) =>
     pathname === path
@@ -40,20 +40,20 @@ const Navbar = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setModelOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  // useEffect(() => {
+  //   const handleClickOutside = (event: MouseEvent) => {
+  //     if (
+  //       dropdownRef.current &&
+  //       !dropdownRef.current.contains(event.target as Node)
+  //     ) {
+  //       setModelOpen(false);
+  //     }
+  //   };
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, []);
 
   useEffect(() => {
     const storedToken = Cookies.get("token");
@@ -85,7 +85,7 @@ const Navbar = () => {
         <nav className="flex justify-between items-center">
           <Link
             href="/"
-            className="items-center gap-2 text-xl font-bold flex text-[#d97708]"
+            className="heading items-center gap-2 text-xl font-bold flex text-[#d97708]"
           >
             <CiForkAndKnife />
             <span>FootSpot</span>
@@ -143,26 +143,23 @@ const Navbar = () => {
                 </>
               ) : (
                 <>
-                  <div ref={dropdownRef}>
+                  <div className="flex gap-2">
+                    <li
+                      className={`hover:text-[#d97708] transition-all duration-300 ease-in-out ${isActive(
+                        "/restaurants/add"
+                      )}`}
+                      onClick={() => router.push("/restaurants/add")}
+                    >
+                      Add Restaurant
+                    </li>
                     <CircleUser
                       onClick={() => setModelOpen(!modelOpen)}
                       className="relative"
                     />
                   </div>
                   {modelOpen && (
-                    <div className="absolute z-50 top-9 right-0 text-gray-100 font-semibold bg-[#d97708] rounded-lg px-6 py-2 flex items-center justify-center">
-                      {token ? (
-                        <div onClick={handleLogout}>Logout</div>
-                      ) : (
-                        <div className="flex gap-4">
-                          <span onClick={() => router.push("/auth/register")}>
-                            Register
-                          </span>
-                          <span onClick={() => router.push("/auth/login")}>
-                            Login
-                          </span>
-                        </div>
-                      )}
+                    <div className="absolute z-50 top-12 right-0 bg-gray-100 font-semibold text-[#d97708] rounded-lg px-6 py-2 flex items-center justify-center">
+                      <div onClick={handleLogout}>Logout</div>
                     </div>
                   )}
                 </>
