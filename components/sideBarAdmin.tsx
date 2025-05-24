@@ -12,7 +12,13 @@ interface TokenPayload {
 }
 
 const SideBarAdmin = () => {
-  const sideBarElements = ["Users", "Restaurants", "MenuItems", "Comments"];
+  const sideBarElements = [
+    "Users",
+    "Restaurants",
+    "MenuItems",
+    "Comments",
+    "Contacts",
+  ];
   const router = useRouter();
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);

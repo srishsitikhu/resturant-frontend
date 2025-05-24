@@ -1,9 +1,13 @@
 "use client";
+import { showNotification } from "@/redux/NotificationSlice";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import React from "react";
+import { useDispatch } from "react-redux";
 
 const CommentsPage = () => {
+  const dispatch = useDispatch();
+
   const fetchComments = async () => {
     const { data } = await axios.get(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/comments`
