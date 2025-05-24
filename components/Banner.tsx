@@ -25,7 +25,7 @@ const Banner = () => {
   });
 
   const filterRestaurants = restaurants?.filter((restaurant) =>
-    restaurant.name.includes(search)
+    restaurant.name.toLowerCase().includes(search.toLowerCase())
   );
   return (
     <section className="pt-20">

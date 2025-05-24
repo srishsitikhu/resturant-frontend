@@ -1,6 +1,6 @@
 "use client";
-import React from "react";
-import { notFound, useParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { notFound, useParams, usePathname } from "next/navigation";
 import { FaRegClock } from "react-icons/fa";
 import { AiOutlineGlobal } from "react-icons/ai";
 import { MdOutlinePhone } from "react-icons/md";
@@ -12,8 +12,29 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { RestaurantProps } from "@/components/RestaurantCard";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+
+type TokenPayLoad = {
+  userId: string;
+};
 
 const Page = () => {
+  const [userId, setUserId] = useState("");
+  const pathname = usePathname();
+  const [token, setToken] = useState(false);
+  useEffect(() => {
+    const storedToken = Cookies.get("token");
+    if (storedToken) {
+      setToken(true);
+      try {
+        const decoded = jwtDecode<TokenPayLoad>(storedToken);
+        setUserId(decoded.userId);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, [pathname]);
   const { id } = useParams();
   const router = useRouter();
 
@@ -50,14 +71,16 @@ const Page = () => {
                 <h1 className="text-3xl font-bold mb-2">{restaurant?.name}</h1>
 
                 {/* EDIT BUTTON */}
-                <div className="mt-4">
-                  <button
-                    onClick={() => router.push(`/restaurants/edit/${id}`)}
-                    className="bg-amber-600 text-white px-4 py-2 rounded hover:bg-amber-700 transition"
-                  >
-                    Edit
-                  </button>
-                </div>
+                {token && Number(userId) === Number(restaurant?.userId) && (
+                  <div className="mt-4">
+                    <button
+                      onClick={() => router.push(`/restaurants/${id}/edit`)}
+                      className="bg-amber-600 text-white px-4 py-2 rounded hover:bg-amber-700 transition"
+                    >
+                      Edit
+                    </button>
+                  </div>
+                )}
 
                 <div className="flex items-center mt-2">
                   <span className="ml-2">
@@ -136,12 +159,16 @@ const Page = () => {
           {/* Reviews */}
           <div className="mt-10">
             <h2 className="text-2xl font-bold mb-6">Reviews</h2>
-            <Review
-              name="Michael Brown"
-              date="Dec 15, 2023"
-              rating={5}
-              comment="Absolutely the best steak I’ve ever had! Great atmosphere too."
-            />
+              <div className="flex gap-2 px-4">
+                <input className="w-full px-4 py-2 border-b focus:outline-none" type="text" />
+                <button className="whitespace-nowrap">Add Review</button>
+              </div>
+              <Review
+                name="Michael Brown"
+                date="Dec 15, 2023"
+                rating={5}
+                comment="Absolutely the best steak I’ve ever had! Great atmosphere too."
+              />
           </div>
         </div>
       </div>

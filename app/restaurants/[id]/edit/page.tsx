@@ -89,7 +89,11 @@ const EditPage: React.FC = () => {
         setHours(data.hours || [""]);
         setMenuItems(
           data?.menuItems?.map((item: any) => ({
-            ...item,
+            name: item.name ?? "",
+            price: item.price ?? "",
+            category: item.category ?? "",
+            description: item.description ?? "",
+            imageUrl: item.imageUrl ?? "",
             imageFile: null,
           }))
         );

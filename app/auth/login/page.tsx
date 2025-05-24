@@ -61,13 +61,13 @@ const LoginPage = () => {
       >
         <h1 className="heading text-center">Sign In</h1>
         <div className="relative flex flex-col">
-          <label htmlFor="Email location">Email location</label>
+          <label htmlFor="EmailAddress">Email Address</label>
           <input
             {...register("email", {
               required: "Email is required.",
               pattern: {
                 value: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
-                message: "Invalid email location",
+                message: "Invalid email Address",
               },
             })}
             type="text"
