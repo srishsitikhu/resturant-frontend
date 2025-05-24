@@ -25,7 +25,7 @@ const UserPage = () => {
     return <div className="p-4 text-red-500">Error fetching users.</div>;
 
   return (
-    <div className="p-6">
+    <div className="p-6 w-full">
       <h1 className="text-2xl font-semibold mb-4">User Table</h1>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white shadow rounded-xl">
