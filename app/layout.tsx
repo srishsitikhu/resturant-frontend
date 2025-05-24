@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import { store } from "@/redux/store";
 import ReactQueryProvider from "@/utils/providers/ReactQueryProvider";
 import { usePathname } from "next/navigation";
+import AdminLayout from "@/components/layouts/AdminLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,6 +31,7 @@ export default function RootLayout({
 }>) {
   const pathname = usePathname();
   const pageToHideLayout = pathname == "/admin";
+  const isAdminRoute = pathname.startsWith("/admin");
   return (
     <html lang="en">
       <body
@@ -39,7 +41,7 @@ export default function RootLayout({
           <ReactQueryProvider>
             {pageToHideLayout ? (
               <>{children}</>
-            ) : (
+            ) : (isAdminRoute?<div><AdminLayout>{children}</AdminLayout> </div>:
               <div>
                 <EndUserLayout>{children}</EndUserLayout>
               </div>
