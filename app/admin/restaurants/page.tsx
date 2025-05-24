@@ -26,7 +26,7 @@ const RestaurantPage = () => {
     return <div className="p-4 text-red-500">Error fetching restaurants.</div>;
 
   return (
-    <div className="p-6">
+    <div className="p-6 w-full">
       <h1 className="text-2xl font-semibold mb-4">Restaurant Table</h1>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white shadow-md rounded-xl">
@@ -51,7 +51,7 @@ const RestaurantPage = () => {
                 <td className="px-4 py-3">{res.id}</td>
                 <td className="px-4 py-3">
                   <img
-                    src={res.imageUrl}
+                    src={`${process.env.NEXT_PUBLIC_SERVER_URL}${res.imageUrl}`}
                     alt="Restaurant"
                     className="w-12 h-12 object-cover rounded"
                   />
