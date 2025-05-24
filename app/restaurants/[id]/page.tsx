@@ -28,6 +28,9 @@ type CommentProps = {
   userId: number;
   rating: number;
   restaurantId: number;
+  user : {
+    name: string
+  }
 };
 
 const Page = () => {
@@ -144,7 +147,7 @@ const Page = () => {
                   <div className="mt-4">
                     <button
                       onClick={() => router.push(`/restaurants/${id}/edit`)}
-                      className="bg-amber-600 text-white px-4 py-2 rounded hover:bg-amber-700 transition"
+                      className="bg-amber-600 cursor-pointer hover:scale-105  ease-in-out duration-300 text-white px-4 py-2 rounded hover:bg-amber-700 transition"
                     >
                       Edit
                     </button>
@@ -251,7 +254,7 @@ const Page = () => {
                 <button
                   onClick={() => addCommentMutation.mutate()}
                   disabled={addCommentMutation.isPending || !comment.trim()}
-                  className="whitespace-nowrap bg-amber-600 text-white px-4 py-2 rounded hover:bg-amber-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="whitespace-nowrap cursor-pointer hover:scale-105 ease-in-out duration-300 bg-amber-600 text-white px-4 py-2 rounded hover:bg-amber-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {addCommentMutation.isPending
                     ? "Submitting..."
@@ -266,7 +269,7 @@ const Page = () => {
                 comments.map((item) => (
                   <Review
                     key={item.id}
-                    name={`${name}`}
+                    name={`${item.user.name}`}
                     date={new Date().toLocaleDateString()}
                     rating={item.rating}
                     comment={item.comment}

@@ -64,7 +64,7 @@ const Contactpage = () => {
               Find quick answers to frequently asked questions about our
               services.
             </p>
-            <button className="border px-4 py-2 cursor-pointer w-fit">
+            <button className="border hover:scale-105 transition-all ease-in-out duration-300 px-4 py-2 cursor-pointer w-fit">
               Visit FAQ Page
             </button>
           </div>
@@ -112,7 +112,7 @@ const Contactpage = () => {
 
               <button
                 type="submit"
-                className="bg-[#d97708] text-neutral-100 py-2 rounded-sm cursor-pointer"
+                className="bg-[#d97708] hover:scale-105 transition-all ease-in-out duration-300 text-neutral-100 py-2 rounded-sm cursor-pointer"
               >
                 Send a Message
               </button>

@@ -36,7 +36,7 @@ const AllRestaurant:React.FC<AllRestaurantProps> = ({restaurants}) => {
         <div className="flex justify-center items-center gap-2 mt-6">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
-            className="px-3 py-1 bg-gray-200 rounded hover:bg-[#f59e0c] hover:text-white disabled:opacity-50"
+            className="px-3 cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 py-1 bg-gray-200 rounded hover:bg-[#f59e0c] hover:text-white disabled:opacity-50"
             disabled={currentPage === 1}
           >
             Prev
@@ -45,7 +45,7 @@ const AllRestaurant:React.FC<AllRestaurantProps> = ({restaurants}) => {
             <button
               key={page}
               onClick={() => handlePageChange(page)}
-              className={`px-3 py-1 rounded ${
+              className={`px-3 py-1 rounded cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 ${
                 page === currentPage
                   ? "bg-[#f59e0c] text-white"
                   : "bg-gray-100 hover:bg-[#f59e0c] hover:text-white"
@@ -56,7 +56,7 @@ const AllRestaurant:React.FC<AllRestaurantProps> = ({restaurants}) => {
           ))}
           <button
             onClick={() => handlePageChange(currentPage + 1)}
-            className="px-3 py-1 bg-gray-200 rounded hover:bg-[#f59e0c] hover:text-white disabled:opacity-50"
+            className="px-3 py-1 cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 bg-gray-200 rounded hover:bg-[#f59e0c] hover:text-white disabled:opacity-50"
             disabled={currentPage === totalPages}
           >
             Next

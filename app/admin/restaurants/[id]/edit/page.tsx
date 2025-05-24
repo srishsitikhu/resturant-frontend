@@ -14,6 +14,7 @@ import { RestaurantProps } from "@/components/RestaurantCard";
 import AddRating from "@/components/AddRating";
 import Spinner from "@/components/BigSpinner";
 import SmallSpinner from "@/components/SmallSpinner";
+import BigSpinner from "@/components/BigSpinner";
 
 interface TokenPayload {
   userId: string;
@@ -47,6 +48,7 @@ const EditPage: React.FC = () => {
   const dispatch = useDispatch();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [userId, setUserId] = useState("");
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const storedToken = Cookies.get("token");
@@ -82,6 +84,7 @@ const EditPage: React.FC = () => {
         const res = await axios.get(`${serverUrl}/api/restaurants/${id}`);
         const data = res.data.restaurant;
         console.log(data);
+        setIsLoading(false)
         reset({
           name: data.name,
           location: data.location,
@@ -89,6 +92,7 @@ const EditPage: React.FC = () => {
           cuisineType: data.cuisineType,
         });
         setHours(data.hours || [""]);
+        setRating(data.rating)
         setMenuItems(
           data?.menuItems?.map((item: any) => ({
             name: item.name ?? "",
@@ -242,7 +246,7 @@ const EditPage: React.FC = () => {
         })
       );
       reset();
-      router.push(`/restaurant/${id}`);
+      router.push(`/admin/restaurants`);
       console.log(reponse);
     } catch (error) {
       console.log(error);
@@ -255,6 +259,7 @@ const EditPage: React.FC = () => {
     }
   };
   const [rating, setRating] = useState<number>(0);
+  if (isLoading) return <BigSpinner />;
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">

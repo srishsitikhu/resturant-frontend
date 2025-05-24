@@ -114,7 +114,7 @@ const Banner = () => {
                   </div>
                   <button
                     type="button"
-                    className="inline-flex items-center justify-center font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed bg-amber-600 text-white hover:bg-amber-700 focus:ring-amber-500 text-base py-2 px-4  md:self-end"
+                    className="inline-flex cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 items-center justify-center font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed bg-amber-600 text-white hover:bg-amber-700 focus:ring-amber-500 text-base py-2 px-4  md:self-end"
                     onClick={() =>
                       router.push(
                         `/restaurants/search?search=${search}&cuisineType=${cuisineType}&location=${location}`

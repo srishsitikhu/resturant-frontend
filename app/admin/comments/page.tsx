@@ -8,6 +8,7 @@ const CommentsPage = () => {
     const { data } = await axios.get(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/comments`
     );
+    console.log(data)
     return data.comments || [];
   };
 
