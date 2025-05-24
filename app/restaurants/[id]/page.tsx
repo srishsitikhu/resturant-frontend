@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { notFound, useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { FaRegClock } from "react-icons/fa";
 import { AiOutlineGlobal } from "react-icons/ai";
 import { MdOutlinePhone } from "react-icons/md";
@@ -9,20 +9,39 @@ import Link from "next/link";
 import Review from "../../../components/Review";
 import MenuSection from "../../../components/MenuSection";
 import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { RestaurantProps } from "@/components/RestaurantCard";
-import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
+import { useDispatch } from "react-redux";
+import { showNotification } from "@/redux/NotificationSlice";
+import AddRating from "@/components/AddRating";
 
 type TokenPayLoad = {
   userId: string;
+  name : string
+};
+
+type CommentProps = {
+  id: number;
+  comment: string;
+  userId: number;
+  rating: number;
+  restaurantId: number;
 };
 
 const Page = () => {
+  const [rating, setRating] = useState<number>(0);
   const [userId, setUserId] = useState("");
-  const pathname = usePathname();
+  const [name, setName] = useState("");
   const [token, setToken] = useState(false);
+  const [comment, setComment] = useState("");
+  const pathname = usePathname();
+  const { id } = useParams();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
+
   useEffect(() => {
     const storedToken = Cookies.get("token");
     if (storedToken) {
@@ -30,24 +49,73 @@ const Page = () => {
       try {
         const decoded = jwtDecode<TokenPayLoad>(storedToken);
         setUserId(decoded.userId);
+        setName(decoded.name)
       } catch (e) {
         console.log(e);
       }
     }
   }, [pathname]);
-  const { id } = useParams();
-  const router = useRouter();
 
+  // ✅ Fetch Comments
+  const fetchComments = async () => {
+    const { data } = await axios.get(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/comments?restaurantId=${id}`
+    );
+    return data.comments || [];
+  };
+
+  const { data: comments } = useQuery<CommentProps[]>({
+    queryKey: ["comments", id],
+    queryFn: fetchComments,
+  });
+
+  // ✅ Fetch Restaurant Details
   const fetchRestaurant = async () => {
     const { data } = await axios.get(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/restaurants/${id}`
     );
-    console.log(data.restaurant);
     return data.restaurant || null;
   };
+
   const { data: restaurant } = useQuery<RestaurantProps>({
     queryKey: ["restaurant", id],
     queryFn: fetchRestaurant,
+  });
+
+  // ✅ Mutation to Add Comment
+  const addCommentMutation = useMutation({
+    mutationFn: async () => {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/comments`,
+        {
+          comment,
+          userId: Number(userId),
+          restaurantId: Number(id),
+          rating,
+        }
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["comments", id] });
+      setComment("");
+      setRating(0);
+      dispatch(
+        showNotification({
+          message: "Review added successfully!",
+          type: "success",
+        })
+      );
+    },
+    onError: (error: any) => {
+      console.error("Failed to add comment:", error);
+      dispatch(
+        showNotification({
+          message: "Failed to add review",
+          type: "error",
+        })
+      );
+    },
   });
 
   return (
@@ -55,6 +123,7 @@ const Page = () => {
       <div className="container">
         <div className="content-wrap max-w-5xl mx-auto">
           <div className="rounded-lg bg-white shadow-md overflow-hidden">
+            {/* Restaurant Image & Basic Info */}
             <div className="relative h-64 md:h-80">
               <img
                 src={`${process.env.NEXT_PUBLIC_SERVER_URL}${restaurant?.imageUrl}`}
@@ -70,7 +139,7 @@ const Page = () => {
                 </div>
                 <h1 className="text-3xl font-bold mb-2">{restaurant?.name}</h1>
 
-                {/* EDIT BUTTON */}
+                {/* Edit Button */}
                 {token && Number(userId) === Number(restaurant?.userId) && (
                   <div className="mt-4">
                     <button
@@ -90,7 +159,7 @@ const Page = () => {
               </div>
             </div>
 
-            {/* Content Section */}
+            {/* About + Contact + Hours */}
             <div className="p-6 content">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 {/* About */}
@@ -107,7 +176,7 @@ const Page = () => {
                     <div className="flex items-center gap-3">
                       <MdOutlinePhone className="text-amber-500" />
                       <Link
-                        href="tel: (123) 456-7890"
+                        href="tel:(123) 456-7890"
                         target="_blank"
                         className="text-amber-600 hover:underline"
                       >
@@ -136,7 +205,7 @@ const Page = () => {
                       <div>
                         <div className="flex flex-col gap-1">
                           {Array.isArray(restaurant?.hours) &&
-                            restaurant?.hours.map((hour, index) => (
+                            restaurant.hours.map((hour, index) => (
                               <div key={index}>{hour}</div>
                             ))}
                         </div>
@@ -156,19 +225,57 @@ const Page = () => {
             </div>
           </div>
 
-          {/* Reviews */}
+          {/* Reviews Section */}
           <div className="mt-10">
             <h2 className="text-2xl font-bold mb-6">Reviews</h2>
-              <div className="flex gap-2 px-4">
-                <input className="w-full px-4 py-2 border-b focus:outline-none" type="text" />
-                <button className="whitespace-nowrap">Add Review</button>
+
+            {/* Review Input */}
+            {token && (
+              <div className="flex flex-col md:flex-row gap-4 px-4 mb-6">
+                <input
+                  className="w-full px-4 py-2 border-b focus:outline-none"
+                  type="text"
+                  placeholder="Write your review..."
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                />
+                <div className="mt-1">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Rating (1–5)
+                  </label>
+                  <AddRating
+                    rating={rating}
+                    onChange={(val) => setRating(val)}
+                  />
+                </div>
+                <button
+                  onClick={() => addCommentMutation.mutate()}
+                  disabled={addCommentMutation.isPending || !comment.trim()}
+                  className="whitespace-nowrap bg-amber-600 text-white px-4 py-2 rounded hover:bg-amber-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {addCommentMutation.isPending
+                    ? "Submitting..."
+                    : "Add Review"}
+                </button>
               </div>
-              <Review
-                name="Michael Brown"
-                date="Dec 15, 2023"
-                rating={5}
-                comment="Absolutely the best steak I’ve ever had! Great atmosphere too."
-              />
+            )}
+
+            {/* Reviews List */}
+            <div className="space-y-4">
+              {comments && comments.length > 0 ? (
+                comments.map((item) => (
+                  <Review
+                    key={item.id}
+                    name={`${name}`}
+                    date={new Date().toLocaleDateString()}
+                    rating={item.rating}
+                    comment={item.comment}
+                  />
+                ))
+              ) : (
+                <p className="text-gray-500 px-4">No reviews yet.</p>
+              )}
+            </div>
           </div>
         </div>
       </div>
