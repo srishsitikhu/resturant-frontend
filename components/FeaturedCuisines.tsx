@@ -25,7 +25,7 @@ const FeaturedCuisines: React.FC<AllRestaurantProps> = ({restaurants}) => {
           const filteredRestaurants = restaurants?.filter(
             (restaurant) => restaurant.cuisineType === cuisineType
           );
-
+          if (!filteredRestaurants?.length) return null;
           return (
             <div key={cuisineType} className="mb-10">
               <h3 className="text-xl font-semibold mb-4 capitalize">

@@ -37,7 +37,7 @@ const Footer = () => {
                                 <Link href='/' className="text-gray-400 hover:text-amber-500 transition-colors">Home</Link>
                             </li>
                             <li>
-                                <Link href='/restaurant/add' className="text-gray-400 hover:text-amber-500 transition-colors">Add Restaurant</Link>
+                                <Link href='/about' className="text-gray-400 hover:text-amber-500 transition-colors">About</Link>
                             </li>
                             <li>
                                 <Link href='/auth/login' className="text-gray-400 hover:text-amber-500 transition-colors">Sign In</Link>

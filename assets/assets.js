@@ -7,7 +7,7 @@ const products = [
     category: "American",
     country: "USA",
     description: "Gourmet burgers made with locally sourced ingredients.",
-    address: "789 Oak St",
+    location: "789 Oak St",
     hours: "11:00 AM – 11:00 PM",
     imageUrl:
       "https://images.pexels.com/photos/1633578/pexels-photo-1633578.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
@@ -21,7 +21,7 @@ const products = [
     category: "Steakhouse",
     country: "Australia",
     description: "Premium aged steaks cooked to perfection over an open flame.",
-    address: "999 Grill Rd",
+    location: "999 Grill Rd",
     hours: "4:00 PM – 11:00 PM",
     imageUrl:
       "https://images.pexels.com/photos/675951/pexels-photo-675951.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
@@ -35,7 +35,7 @@ const products = [
     category: "Italian",
     country: "Italy",
     description: "Authentic Italian cuisine with a modern twist.",
-    address: "123 Main St",
+    location: "123 Main St",
     hours: "11:00 AM – 10:00 PM",
     imageUrl:
       "https://images.pexels.com/photos/262918/pexels-photo-262918.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
@@ -48,8 +48,9 @@ const products = [
     type: "top rated",
     category: "Mexican",
     country: "Mexico",
-    description: "Authentic Mexican tacos and street food with fresh tortillas.",
-    address: "777 Spice Ave",
+    description:
+      "Authentic Mexican tacos and street food with fresh tortillas.",
+    location: "777 Spice Ave",
     hours: "10:00 AM – 10:00 PM",
     imageUrl:
       "https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
@@ -63,7 +64,7 @@ const products = [
     category: "Japanese",
     country: "Japan",
     description: "Premium sushi with fresh fish and traditional preparation.",
-    address: "456 Ocean Dr",
+    location: "456 Ocean Dr",
     hours: "12:00 PM – 9:30 PM",
     imageUrl:
       "https://images.pexels.com/photos/357756/pexels-photo-357756.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
@@ -76,8 +77,9 @@ const products = [
     type: "popular",
     category: "French",
     country: "France",
-    description: "Classic French bistro with elegant flavors and wine pairings.",
-    address: "12 Rue de Paris",
+    description:
+      "Classic French bistro with elegant flavors and wine pairings.",
+    location: "12 Rue de Paris",
     hours: "10:00 AM – 10:00 PM",
     imageUrl:
       "https://images.pexels.com/photos/6267/menu-restaurant-vintage-table.jpg?auto=compress&cs=tinysrgb&dpr=1&w=500",
@@ -91,7 +93,7 @@ const products = [
     category: "Indian",
     country: "India",
     description: "Aromatic Indian dishes with bold spices and rich flavors.",
-    address: "55 Curry Lane",
+    location: "55 Curry Lane",
     hours: "11:00 AM – 10:00 PM",
     imageUrl:
       "https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -6,7 +6,7 @@ import EndUserLayout from "../components/layouts/EndUserLayout";
 import { Provider } from "react-redux";
 import { store } from "@/redux/store";
 import ReactQueryProvider from "@/utils/providers/ReactQueryProvider";
-
+import { usePathname } from "next/navigation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,6 +28,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+  const pageToHideLayout = pathname == "/admin";
   return (
     <html lang="en">
       <body
@@ -35,9 +37,13 @@ export default function RootLayout({
       >
         <Provider store={store}>
           <ReactQueryProvider>
-          <div>
-            <EndUserLayout>{children}</EndUserLayout>
-          </div>
+            {pageToHideLayout ? (
+              <>{children}</>
+            ) : (
+              <div>
+                <EndUserLayout>{children}</EndUserLayout>
+              </div>
+            )}
           </ReactQueryProvider>
         </Provider>
       </body>

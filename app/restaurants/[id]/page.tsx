@@ -1,6 +1,6 @@
-"use client"
-import React from "react";
-import { notFound, useParams } from "next/navigation";
+"use client";
+import React, { useEffect, useState } from "react";
+import { notFound, useParams, usePathname } from "next/navigation";
 import { FaRegClock } from "react-icons/fa";
 import { AiOutlineGlobal } from "react-icons/ai";
 import { MdOutlinePhone } from "react-icons/md";
@@ -11,11 +11,33 @@ import MenuSection from "../../../components/MenuSection";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { RestaurantProps } from "@/components/RestaurantCard";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
+type TokenPayLoad = {
+  userId: string;
+};
 
 const Page = () => {
- 
-  const {id} = useParams()
+  const [userId, setUserId] = useState("");
+  const pathname = usePathname();
+  const [token, setToken] = useState(false);
+  useEffect(() => {
+    const storedToken = Cookies.get("token");
+    if (storedToken) {
+      setToken(true);
+      try {
+        const decoded = jwtDecode<TokenPayLoad>(storedToken);
+        setUserId(decoded.userId);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, [pathname]);
+  const { id } = useParams();
+  const router = useRouter();
+
   const fetchRestaurant = async () => {
     const { data } = await axios.get(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/restaurants/${id}`
@@ -24,7 +46,7 @@ const Page = () => {
     return data.restaurant || null;
   };
   const { data: restaurant } = useQuery<RestaurantProps>({
-    queryKey: ["restaurant",id],
+    queryKey: ["restaurant", id],
     queryFn: fetchRestaurant,
   });
 
@@ -47,7 +69,20 @@ const Page = () => {
                   </span>
                 </div>
                 <h1 className="text-3xl font-bold mb-2">{restaurant?.name}</h1>
-                <div className="flex items-center">
+
+                {/* EDIT BUTTON */}
+                {token && Number(userId) === Number(restaurant?.userId) && (
+                  <div className="mt-4">
+                    <button
+                      onClick={() => router.push(`/restaurants/${id}/edit`)}
+                      className="bg-amber-600 text-white px-4 py-2 rounded hover:bg-amber-700 transition"
+                    >
+                      Edit
+                    </button>
+                  </div>
+                )}
+
+                <div className="flex items-center mt-2">
                   <span className="ml-2">
                     {restaurant?.rating} ({restaurant?.viewCount} reviews)
                   </span>
@@ -67,7 +102,7 @@ const Page = () => {
                   <div className="space-y-3">
                     <div className="flex items-start gap-3">
                       <FiMapPin className="text-amber-500" />
-                      <span>{restaurant?.address}</span>
+                      <span>{restaurant?.location}</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <MdOutlinePhone className="text-amber-500" />
@@ -98,7 +133,7 @@ const Page = () => {
                   <div className="space-y-3">
                     <div className="flex gap-3">
                       <FaRegClock className="text-amber-500 mt-2" />
-                      <div> 
+                      <div>
                         <div className="flex flex-col gap-1">
                           {Array.isArray(restaurant?.hours) &&
                             restaurant?.hours.map((hour, index) => (
@@ -112,31 +147,28 @@ const Page = () => {
               </div>
 
               {/* Menu */}
-              <div className="border-t border-gray-200 pt-8">
-                <h2 className="text-xl font-semibold mb-4">Menu</h2>
-                <MenuSection
-                  title="Steaks"
-                  items={[
-                    {
-                      name: "Ribeye Steak (12oz)",
-                      desc: "Prime beef, aged 28 days",
-                      price: "32.99",
-                    },
-                  ]}
-                />
-              </div>
+              {restaurant?.menuItems && (
+                <div className="border-t border-gray-200 pt-8">
+                  <h2 className="text-xl font-semibold mb-4">Menu</h2>
+                  <MenuSection items={restaurant.menuItems} />
+                </div>
+              )}
             </div>
           </div>
 
           {/* Reviews */}
           <div className="mt-10">
             <h2 className="text-2xl font-bold mb-6">Reviews</h2>
-            <Review
-              name="Michael Brown"
-              date="Dec 15, 2023"
-              rating={5}
-              comment="Absolutely the best steak I’ve ever had! Great atmosphere too."
-            />
+              <div className="flex gap-2 px-4">
+                <input className="w-full px-4 py-2 border-b focus:outline-none" type="text" />
+                <button className="whitespace-nowrap">Add Review</button>
+              </div>
+              <Review
+                name="Michael Brown"
+                date="Dec 15, 2023"
+                rating={5}
+                comment="Absolutely the best steak I’ve ever had! Great atmosphere too."
+              />
           </div>
         </div>
       </div>
