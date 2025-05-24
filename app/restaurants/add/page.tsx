@@ -9,8 +9,9 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { showNotification } from "@/redux/NotificationSlice";
 import { cuisineTypes } from "@/constantAndEnums";
-import { QueryClient, useQueryClient } from '@tanstack/react-query';
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import AddRating from "@/components/AddRating";
+import SmallSpinner from "@/components/SmallSpinner";
 
 interface TokenPayload {
   userId: string;
@@ -26,7 +27,7 @@ interface MenuItem {
 }
 
 const AddPage: React.FC = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const router = useRouter();
   const pathname = usePathname();
   const [token, setToken] = useState(false);
@@ -36,7 +37,7 @@ const AddPage: React.FC = () => {
     register,
     setError,
     reset,
-    formState: { errors },
+    formState: { errors,isSubmitting },
     handleSubmit,
     watch,
   } = useForm({ mode: "onChange" });
@@ -176,6 +177,8 @@ const AddPage: React.FC = () => {
         setError("hours", { message: "At least One hours must insert" });
         return;
       }
+      await Promise.all(menuItems.map((_, index) => uploadImage(index)));
+
       const imageUrl = await uploadRestaurantImage();
       console.log(imageUrl);
       const reponse = await axios.post(`${serverUrl}/api/restaurants`, {
@@ -184,7 +187,7 @@ const AddPage: React.FC = () => {
         hours: hours,
         userId: Number(userId),
         menuItems: menuItems,
-        rating: rating, 
+        rating: rating,
       });
       dispatch(
         showNotification({
@@ -192,11 +195,10 @@ const AddPage: React.FC = () => {
           type: "success",
         })
       );
-      queryClient.invalidateQueries({queryKey: ["restaurants"]})
+      queryClient.invalidateQueries({ queryKey: ["restaurants"] });
       console.log(reponse);
       reset();
-router.push(`/restaurants`)
-
+      router.push(`/restaurants`);
     } catch (error) {
       console.log(error);
       dispatch(
@@ -208,7 +210,6 @@ router.push(`/restaurants`)
     }
   };
   const [rating, setRating] = useState<number>(0);
-
 
   return (
     <div className="min-h-screen bg-gray-100 py-20">
@@ -284,10 +285,7 @@ router.push(`/restaurants`)
                 <label className="block text-sm font-medium text-gray-700">
                   Rating (1-5)
                 </label>
-                <AddRating
-                  rating={rating}
-                  onChange={(val) => setRating(val)}
-                />
+                <AddRating rating={rating} onChange={(val) => setRating(val)} />
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
@@ -351,7 +349,7 @@ router.push(`/restaurants`)
               <button
                 type="button"
                 onClick={addHour}
-                className="text-blue-600 flex items-center"
+                className="text-blue-600 cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 flex items-center"
               >
                 <PlusCircle className="mr-1" size={18} /> Add Hours
               </button>
@@ -369,7 +367,7 @@ router.push(`/restaurants`)
                   <button
                     type="button"
                     onClick={() => removeHour(index)}
-                    className="text-red-500"
+                    className="text-red-500 cursor-pointer hover:scale-105 transition-all ease-in-out duration-300"
                   >
                     <MinusCircle size={18} />
                   </button>
@@ -386,7 +384,7 @@ router.push(`/restaurants`)
               <button
                 type="button"
                 onClick={addItem}
-                className="text-blue-600 flex items-center"
+                className="text-blue-600 cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 flex items-center"
               >
                 <PlusCircle className="mr-1" size={18} /> Add Item
               </button>
@@ -424,18 +422,6 @@ router.push(`/restaurants`)
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="itemName">Category </label>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input
-                      type="text"
-                      placeholder="e.g., Appetizers"
-                      className="input-style"
-                      value={item.category}
-                      onChange={(e) =>
-                        handleItemChange(index, "category", e.target.value)
-                      }
-                    />
-                  </div>
                   <div className="flex flex-col gap-2">
                     <label htmlFor="itemName">Item Description </label>
                     <textarea
@@ -464,16 +450,6 @@ router.push(`/restaurants`)
                     />
                   </div>
                   {item.imageFile && (
-                    <button
-                      type="button"
-                      onClick={() => uploadImage(index)}
-                      className="text-green-600 flex items-center"
-                    >
-                      <Upload size={18} className="mr-1" />
-                      Upload Image
-                    </button>
-                  )}
-                  {item.imageFile && (
                     <img
                       src={URL.createObjectURL(item.imageFile)}
                       alt="Preview"
@@ -486,7 +462,7 @@ router.push(`/restaurants`)
                   <button
                     type="button"
                     onClick={() => removeItem(index)}
-                    className="text-red-500 flex items-center"
+                    className="text-red-500 flex items-center cursor-pointer hover:scale-105 transition-all ease-in-out duration-300"
                   >
                     <MinusCircle size={18} />{" "}
                     <span className="ml-1">Remove</span>
@@ -496,10 +472,11 @@ router.push(`/restaurants`)
             ))}
           </div>
 
-          <div className="pt-6">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow">
+          <div className="pt-6 flex gap-4">
+            <button className="bg-blue-600 cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow">
               Submit
             </button>
+            {isSubmitting && <SmallSpinner />}
           </div>
         </form>
       </div>

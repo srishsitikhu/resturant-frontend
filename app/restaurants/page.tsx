@@ -1,4 +1,5 @@
 "use client"
+import BigSpinner from "@/components/BigSpinner";
 import { RestaurantProps } from "@/components/RestaurantCard";
 import RestaurantRail from "@/components/RestaurantRail";
 import { useQuery } from "@tanstack/react-query";
@@ -13,10 +14,11 @@ const SearchPage = () => {
     console.log(data.restaurants);
     return data.restaurants || [];
   };
-  const { data: restaurants } = useQuery<RestaurantProps[]>({
+  const { data: restaurants,isLoading } = useQuery<RestaurantProps[]>({
     queryKey: ["restaurants"],
     queryFn: fetchRestaurants,
   });
+  if(isLoading)return<BigSpinner/>
   return (
     <div className="container py-20">
       <h1 className="heading pb-8">All Restaurants:</h1>

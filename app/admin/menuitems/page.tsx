@@ -1,9 +1,17 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
+import DeleteModal from "@/components/DeleteModal";
+import { useDispatch } from "react-redux";
+import { showNotification } from "@/redux/NotificationSlice";
 
 const MenuItemsPage = () => {
+  const [selectedId, setSelectedId] = useState<number>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
+
   const fetchMenuItems = async () => {
     const { data } = await axios.get(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/menu-items`
@@ -19,6 +27,36 @@ const MenuItemsPage = () => {
     queryKey: ["menuItems"],
     queryFn: fetchMenuItems,
   });
+
+  const handleDeleteSelect = (id: number) => {
+    setSelectedId(id);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/menu-items/${selectedId}`
+      );
+      queryClient.invalidateQueries({ queryKey: ["menuItems"] });
+      dispatch(
+        showNotification({
+          message: "Menu item deleted successfully",
+          type: "success",
+        })
+      );
+    } catch (error) {
+      console.error(error);
+      dispatch(
+        showNotification({
+          message: "Failed to delete menu item",
+          type: "error",
+        })
+      );
+    } finally {
+      setIsModalOpen(false);
+    }
+  };
 
   if (isLoading) return <div className="p-4">Loading menu items...</div>;
   if (isError)
@@ -37,6 +75,7 @@ const MenuItemsPage = () => {
               <th className="px-4 py-3">Description</th>
               <th className="px-4 py-3">Price</th>
               <th className="px-4 py-3">Restaurant</th>
+              <th className="px-4 py-3">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -62,12 +101,20 @@ const MenuItemsPage = () => {
                 <td className="px-4 py-3 text-sm">
                   {item.restaurant?.name || "Unknown"}
                 </td>
+                <td className="px-4 py-3 text-sm">
+                  <button
+                    onClick={() => handleDeleteSelect(item.id)}
+                    className="text-red-600 border border-red-500 rounded-lg px-2 py-1 hover:bg-red-50 hover:scale-105 transition-all duration-200"
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))}
             {menuItems.length === 0 && (
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={7}
                   className="text-center py-4 text-sm text-gray-500"
                 >
                   No menu items found.
@@ -76,6 +123,13 @@ const MenuItemsPage = () => {
             )}
           </tbody>
         </table>
+        {isModalOpen && (
+          <DeleteModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            onConfirm={handleDelete}
+          />
+        )}
       </div>
     </div>
   );

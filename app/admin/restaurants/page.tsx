@@ -1,16 +1,49 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import BigSpinner from "@/components/BigSpinner";
+import DeleteModal from "@/components/DeleteModal";
+import { showNotification } from "@/redux/NotificationSlice";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import React from "react";
-
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 const RestaurantPage = () => {
+  const [restaurantId, setRestaurantId] = useState<number>();
+  const [isModelOpen, setisModelOpen] = useState(false);
+  const dispatch = useDispatch();
+  const queryClient = useQueryClient()
+
   const fetchRestaurants = async () => {
     const { data } = await axios.get(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/restaurants`
     );
     return data.restaurants || [];
   };
+
+  const handleDeleteSelect = (id: number) => {
+    setRestaurantId(id);
+    setisModelOpen(true);
+  };
+
+  const handleDeleteRestaurant = async() => {
+    try{
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/restaurants/${restaurantId}`
+        )
+        queryClient.invalidateQueries({queryKey:["restaurants"]})
+        dispatch(
+          showNotification({
+            message: "Deletion Succesfull",
+            type : "success"
+          })
+        )
+        setisModelOpen(false)
+    }catch(e){
+console.log(e)
+    }
+  };
+  const router = useRouter()
 
   const {
     data: restaurants,
@@ -21,7 +54,7 @@ const RestaurantPage = () => {
     queryFn: fetchRestaurants,
   });
 
-  if (isLoading) return <div className="p-4">Loading restaurants...</div>;
+  if (isLoading) return <BigSpinner/>;
   if (isError)
     return <div className="p-4 text-red-500">Error fetching restaurants.</div>;
 
@@ -39,7 +72,6 @@ const RestaurantPage = () => {
               <th className="px-4 py-3">Location</th>
               <th className="px-4 py-3">Hours</th>
               <th className="px-4 py-3">Rating</th>
-              <th className="px-4 py-3">Views</th>
               <th className="px-4 py-3">Owner</th>
               <th className="px-4 py-3">Created</th>
               <th className="px-4 py-3">Actions</th>
@@ -67,21 +99,29 @@ const RestaurantPage = () => {
                   </ul>
                 </td>
                 <td className="px-4 py-3">{res.rating.toFixed(1)}</td>
-                <td className="px-4 py-3">{res.viewCount}</td>
                 <td className="px-4 py-3">{res.user?.name || "Unknown"}</td>
                 <td className="px-4 py-3">
                   {new Date(res.createdAt).toLocaleDateString()}
                 </td>
-                <td className="px-4 py-3 flex gap-2">
-                  <button className="text-blue-600 hover:underline text-xs">
+                <td className="px-4 py-3 flex flex-col gap-2">
+                  <button
+                    onClick={() =>
+                      router.push(`/admin/restaurants/${res.id}/edit`)
+                    }
+                    className="text-blue-600 border rounded-lg px-2 py-1 cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 hover:underline text-lg"
+                  >
                     Edit
                   </button>
-                  <button className="text-red-600 hover:underline text-xs">
+                  <button
+                    onClick={() => handleDeleteSelect(res.id)}
+                    className="text-red-600 border rounded-lg px-2 py-1 cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 hover:underline text-lg"
+                  >
                     Delete
                   </button>
                 </td>
               </tr>
             ))}
+
             {restaurants.length === 0 && (
               <tr>
                 <td
@@ -94,6 +134,13 @@ const RestaurantPage = () => {
             )}
           </tbody>
         </table>
+        {isModelOpen && (
+          <DeleteModal
+            isOpen={isModelOpen}
+            onClose={() => setisModelOpen(false)}
+            onConfirm={() => handleDeleteRestaurant()}
+          />
+        )}
       </div>
     </div>
   );

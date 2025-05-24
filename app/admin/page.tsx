@@ -103,7 +103,7 @@ const LoginPage = () => {
 
           <RiLockPasswordLine size={20} className="absolute top-9 left-3" />
         </div>
-        <button className="bg-lime-800    text-neutral-200 py-4 rounded-lg text-xl">
+        <button className="bg-lime-800 cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 text-neutral-200 py-4 rounded-lg text-xl">
           Sign In
         </button>
       </form>

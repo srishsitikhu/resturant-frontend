@@ -137,7 +137,7 @@ const RegisterPage = () => {
           )}
           <RiLockPasswordLine size={20} className="absolute top-9 left-3" />
         </div>
-        <button className="bg-[#d97708] text-neutral-200 py-4 rounded-lg text-xl">
+        <button className="bg-[#d97708] cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 text-neutral-200 py-4 rounded-lg text-xl">
           Sign Up
         </button>
         <p className="text-center px-4 py-2">
