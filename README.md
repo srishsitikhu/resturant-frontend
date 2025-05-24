@@ -19,7 +19,6 @@
 12. [Environment Variables](#environment-variables)  
 13. [Future Improvements](#future-improvements)  
 
-
 ---
 
 ## 1. Project Overview
@@ -317,12 +316,10 @@ npm run dev
 
 ## 13. Future Improvements
 
-- Pagination for large datasets.
 - User profile management.
 - More advanced admin analytics.
 - Notifications system.
 - Mobile responsive enhancements.
 
 ---
-
 
