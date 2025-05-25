@@ -5,14 +5,14 @@ import { VscWorkspaceTrusted } from "react-icons/vsc";
 
 const Aboutpage = () => {
     return (
-        <section className="mt-20 mb-10 max-w-[80%] m-auto">
+        <section className="mt-20 mb-10 laptop:max-w-[80%] m-auto">
             <div className="container flex flex-col items-center gap-6">
                 <div className="flex flex-col items-center px-4 py-2 gap-4">
                     <h1 className="main-heading">About FoodSpot</h1>
-                    <h2>Connecting food lovers with their next favorite restaurant</h2>
+                    <h2 className="">Connecting food lovers with their next favorite restaurant</h2>
                 </div>
                 <div className="shadow-xl px-8 py-4 flex flex-col gap-4">
-                    <h2 className="heading-client">Our Mission</h2>
+                    <h2 className="heading">Our Mission</h2>
                     <p className="description-heading-client">
                         At FoodSpot, we believe that every great meal tells a story. Our
                         mission is to help people discover exceptional dining experiences
@@ -21,7 +21,7 @@ const Aboutpage = () => {
                         share, and celebrate the diverse culinary landscape of our city.
                     </p>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 laptop:grid-cols-2 gap-4">
                     <div className="shadow-xl py-4 px-6 flex flex-col gap-2">
                         <div className="flex items-center gap-4">
                             <CiForkAndKnife

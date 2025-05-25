@@ -58,6 +58,18 @@ const Navbar = () => {
   //   };
   // }, []);
 const [userName, setUserName] = useState("");
+const [showSidebar, setShowSidebar] = useState(false);
+const [animationClass, setAnimationClass] = useState("");
+
+useEffect(() => {
+  if (isSideBarOpen) {
+    setShowSidebar(true);
+    setAnimationClass("slide-in");
+  } else {
+    setAnimationClass("slide-out");
+    setTimeout(() => setShowSidebar(false), 400); // match animation duration
+  }
+}, [isSideBarOpen]);
   useEffect(() => {
     const storedToken = Cookies.get("token");
     if (storedToken) {
@@ -85,7 +97,7 @@ const [userName, setUserName] = useState("");
           : "bg-transparent py-4"
       }`}
     >
-      <div className="container">
+      <div className={`container  mx-auto px-4 laptop:px-0`}>
         <nav className="flex justify-between items-center">
           <Link
             href="/"
@@ -163,8 +175,8 @@ const [userName, setUserName] = useState("");
                     >
                       {userName?.[0]?.toUpperCase() || "?"}
                       {modelOpen && (
-                        <div className="absolute z-50 top-12 right-0 bg-gray-100 font-semibold text-[#d97708] rounded-lg px-6 py-2 flex items-center justify-center">
-                          <div onClick={handleLogout}>Logout</div>
+                        <div onClick={()=>setModelOpen(false)} className="absolute z-50 top-12 right-0 bg-gray-100 font-semibold text-[#d97708] rounded-lg px-6 py-2 flex items-center justify-center">
+                          <div onClick={() => { handleLogout(); router.push("/"); }}>Logout</div>
                         </div>
                       )}
                     </div>
@@ -173,14 +185,23 @@ const [userName, setUserName] = useState("");
               )}
             </ul>
 
-            {isSideBarOpen && (
-              <div
-                className={`${
-                  isSideBarOpen ? "slide-out" : "slide-in"
-                } fixed top-12 h-[calc(93vh)] right-0 border-2 border-red-500 px-4 py-2 sub-heading-client w-[50%] justify-between laptop:hidden`}
-              >
-                <SideBar />
-              </div>
+            {showSidebar && (
+              <>
+                {/* Backdrop Blur */}
+                <div
+                  className="fixed inset-0 z-20 backdrop-blur-sm bg-black/30 laptop:hidden"
+                  onClick={() => setIsSideBarOpen(false)}
+                />
+
+                {/* Sidebar */}
+                <div
+                  className={`${animationClass} fixed z-30 top-12 h-[calc(93vh)] right-0 px-4 py-2 sub-heading-client w-[50%] justify-between laptop:hidden bg-white shadow-lg p-4 rounded-l-lg`}
+                >
+                  <SideBar 
+                  isOpen={showSidebar}
+                  onClose={()=>setShowSidebar(false)}/>
+                </div>
+              </>
             )}
           </div>
         </nav>

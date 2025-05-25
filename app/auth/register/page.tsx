@@ -51,7 +51,7 @@ const RegisterPage = () => {
     }
   };
   return (
-    <section className="my-20 max-w-[500px] min-w-[500px] m-auto px-4">
+    <section className="my-20 laptop:max-w-[500px] laptop:min-w-[500px] laptop:m-auto px-2 laptop:px-4">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="container shadow-xl flex flex-col gap-4 py-8"

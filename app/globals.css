@@ -35,7 +35,7 @@
 }
 @keyframes slideIn {
   from {
-    transform: translateX(50%);
+    transform: translateX(100%);
     opacity: 0;
   }
   to {
@@ -46,19 +46,19 @@
 
 @keyframes slideOut {
   from {
-    transform: translateX(50%);
+    transform: translateX(0%);
     opacity: 1;
   }
   to {
-    transform: translateX(0%);
+    transform: translateX(100%);
     opacity: 0;
   }
 }
 
 .slide-in {
-  animation: slideIn 0.3s ease-in-out backwards;
+  animation: slideIn 0.4s ease-in-out forwards;
 }
 
 .slide-out {
-  animation: slideOut 0.3s ease-in-out backwards;
+  animation: slideOut 0.4s ease-in-out forwards;
 }

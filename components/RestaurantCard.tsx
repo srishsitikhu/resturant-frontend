@@ -38,7 +38,7 @@ const RestaurantCard: React.FC<{ resto: RestaurantProps }> = ({ resto }) => {
       onClick={() => router.push(`/restaurants/${resto.id}`)}
       className="flex cursor-pointer flex-col shadow-xl rounded-lg overflow-hidden bg-white transform transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
     >
-      <div className="relative h-[40px] laptop:h-[180px]">
+      <div className="relative h-[120px] laptop:h-[180px]">
         <img
           className="object-cover w-full h-full"
           src={`${process.env.NEXT_PUBLIC_SERVER_URL}${resto.imageUrl}`}
@@ -58,14 +58,11 @@ const RestaurantCard: React.FC<{ resto: RestaurantProps }> = ({ resto }) => {
         </p>
         <div className="flex gap-2 text-sm text-gray-600 mb-1">
           <CiLocationOn className="mr-1" />
-          {resto.location}
+          <p className="line-clamp-1 laptop:line-clamp-none">{resto.location}</p>
         </div>
         <div className="flex gap-2 text-sm text-gray-600">
           <CiTimer className="justify-start" />
-          <div className="flex flex-col gap-1">
-            {Array.isArray(resto.hours) &&
-              resto.hours.map((hour, index) => <div key={index}>{hour}</div>)}
-          </div>
+     {resto.hours.length > 0 ? (resto.hours[0]) : "No hours available"}
         </div>
       </div>
     </div>
