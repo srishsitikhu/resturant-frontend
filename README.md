@@ -1,23 +1,22 @@
-
 # Restaurant Management App Documentation
 
 ---
 
 ## Table of Contents
 
-1. [Project Overview](#project-overview)  
-2. [Technology Stack](#technology-stack)  
-3. [Setup and Installation](#setup-and-installation)  
-4. [Project Structure](#project-structure)  
-5. [Features](#features)  
-6. [API Documentation](#api-documentation)  
-7. [Authentication and Authorization](#authentication-and-authorization)  
-8. [Database Schema](#database-schema)  
-9. [Frontend Usage](#frontend-usage)  
-10. [Backend Usage](#backend-usage)  
-11. [How to Run](#how-to-run)  
-12. [Environment Variables](#environment-variables)  
-13. [Future Improvements](#future-improvements)  
+1. [Project Overview](#project-overview)
+2. [Technology Stack](#technology-stack)
+3. [Setup and Installation](#setup-and-installation)
+4. [Project Structure](#project-structure)
+5. [Features](#features)
+6. [API Documentation](#api-documentation)
+7. [Authentication and Authorization](#authentication-and-authorization)
+8. [Database Schema](#database-schema)
+9. [Frontend Usage](#frontend-usage)
+10. [Backend Usage](#backend-usage)
+11. [How to Run](#how-to-run)
+12. [Environment Variables](#environment-variables)
+13. [Future Improvements](#future-improvements)
 
 ---
 
@@ -34,13 +33,13 @@ The app supports role-based access with two main roles:
 
 ## 2. Technology Stack
 
-| Layer      | Technology              |
-|------------|-------------------------|
-| Frontend   | Next.js, Tailwind CSS   |
-| Backend    | Express.js              |
-| Database   | PostgreSQL with Prisma ORM |
+| Layer          | Technology                     |
+| -------------- | ------------------------------ |
+| Frontend       | Next.js, Tailwind CSS          |
+| Backend        | Express.js                     |
+| Database       | PostgreSQL with Prisma ORM     |
 | Authentication | JWT (JSON Web Tokens), cookies |
-| API Calls  | Axios, React Query      |
+| API Calls      | Axios, React Query             |
 
 ---
 
@@ -167,44 +166,44 @@ next-express-app/
 
 ### Authentication
 
-| Method | Endpoint         | Description         |
-|--------|------------------|---------------------|
-| POST   | `/auth/register` | Register a new user |
-| POST   | `/auth/login`    | User login          |
+| Method | Endpoint         | Description                 |
+| ------ | ---------------- | --------------------------- |
+| POST   | `/auth/register` | Register a new user         |
+| POST   | `/auth/login`    | User login                  |
 | POST   | `/auth/logout`   | User logout (clears cookie) |
 
 ### Restaurants
 
-| Method | Endpoint              | Description                      |
-|--------|-----------------------|----------------------------------|
-| GET    | `/api/restaurants`    | List all restaurants             |
-| POST   | `/api/restaurants`    | Add a new restaurant (auth only)|
-| GET    | `/api/restaurants/:id`| Get restaurant details           |
-| PUT    | `/api/restaurants/:id`| Edit restaurant (owner only)     |
-| DELETE | `/api/restaurants/:id`| Delete restaurant (owner only)   |
+| Method | Endpoint               | Description                      |
+| ------ | ---------------------- | -------------------------------- |
+| GET    | `/api/restaurants`     | List all restaurants             |
+| POST   | `/api/restaurants`     | Add a new restaurant (auth only) |
+| GET    | `/api/restaurants/:id` | Get restaurant details           |
+| PUT    | `/api/restaurants/:id` | Edit restaurant (owner only)     |
+| DELETE | `/api/restaurants/:id` | Delete restaurant (owner only)   |
 
 ### Menu Items
 
-| Method | Endpoint           | Description              |
-|--------|--------------------|--------------------------|
-| GET    | `/api/menu-items`  | List all menu items      |
-| POST   | `/api/menu-items`  | Add menu item (auth only)|
-| PUT    | `/api/menu-items/:id`| Update menu item        |
-| DELETE | `/api/menu-items/:id`| Delete menu item        |
+| Method | Endpoint              | Description               |
+| ------ | --------------------- | ------------------------- |
+| GET    | `/api/menu-items`     | List all menu items       |
+| POST   | `/api/menu-items`     | Add menu item (auth only) |
+| PUT    | `/api/menu-items/:id` | Update menu item          |
+| DELETE | `/api/menu-items/:id` | Delete menu item          |
 
 ### Comments
 
-| Method | Endpoint           | Description                  |
-|--------|--------------------|------------------------------|
-| GET    | `/api/comments`    | List all comments            |
-| POST   | `/api/comments`    | Add comment (auth only)      |
-| DELETE | `/api/comments/:id`| Delete comment (admin only) |
+| Method | Endpoint            | Description                 |
+| ------ | ------------------- | --------------------------- |
+| GET    | `/api/comments`     | List all comments           |
+| POST   | `/api/comments`     | Add comment (auth only)     |
+| DELETE | `/api/comments/:id` | Delete comment (admin only) |
 
 ### Users
 
-| Method | Endpoint        | Description            |
-|--------|-----------------|------------------------|
-| GET    | `/api/users`    | List all users (admin) |
+| Method | Endpoint     | Description            |
+| ------ | ------------ | ---------------------- |
+| GET    | `/api/users` | List all users (admin) |
 
 ---
 
@@ -222,47 +221,47 @@ next-express-app/
 
 \`\`\`prisma
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  role      String   @default("customer") // or "admin"
-  restaurants Restaurant[]
-  comments  Comment[]
+id Int @id @default(autoincrement())
+name String
+email String @unique
+password String
+role String @default("customer") // or "admin"
+restaurants Restaurant[]
+comments Comment[]
 }
 
 model Restaurant {
-  id          Int         @id @default(autoincrement())
-  name        String
-  address     String
-  description String
-  image       String?
-  cuisineType String
-  openingHours String
-  userId      Int
-  user        User        @relation(fields: [userId], references: [id])
-  menuItems   MenuItem[]
-  comments    Comment[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+id Int @id @default(autoincrement())
+name String
+address String
+description String
+image String?
+cuisineType String
+openingHours String
+userId Int
+user User @relation(fields: [userId], references: [id])
+menuItems MenuItem[]
+comments Comment[]
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 }
 
 model MenuItem {
-  id           Int        @id @default(autoincrement())
-  name         String
-  price        Float
-  restaurantId Int
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+id Int @id @default(autoincrement())
+name String
+price Float
+restaurantId Int
+restaurant Restaurant @relation(fields: [restaurantId], references: [id])
 }
 
 model Comment {
-  id           Int        @id @default(autoincrement())
-  text         String
-  userId       Int
-  restaurantId Int
-  user         User       @relation(fields: [userId], references: [id])
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
-  createdAt    DateTime   @default(now())
+id Int @id @default(autoincrement())
+text String
+userId Int
+restaurantId Int
+user User @relation(fields: [userId], references: [id])
+restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+createdAt DateTime @default(now())
 }
 \`\`\`
 
@@ -306,11 +305,11 @@ npm run dev
 
 ## 12. Environment Variables
 
-| Key           | Description                     |
-|---------------|---------------------------------|
-| DATABASE_URL  | PostgreSQL connection string    |
-| JWT_SECRET    | Secret key for JWT token        |
-| PORT          | Backend server port (default 5000) |
+| Key          | Description                        |
+| ------------ | ---------------------------------- |
+| DATABASE_URL | PostgreSQL connection string       |
+| JWT_SECRET   | Secret key for JWT token           |
+| PORT         | Backend server port (default 5000) |
 
 ---
 
@@ -322,4 +321,3 @@ npm run dev
 - Mobile responsive enhancements.
 
 ---
-

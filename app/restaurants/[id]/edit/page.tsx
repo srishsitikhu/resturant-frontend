@@ -266,7 +266,7 @@ const EditPage: React.FC = () => {
             <h2 className="text-xl font-semibold text-gray-700 mb-4">
               Basic Information
             </h2>
-            <div className="flex justify-between gap-6">
+            <div className="flex flex-col laptop:flex-row justify-between gap-6">
               <div>
                 <label
                   htmlFor="name"
@@ -279,7 +279,7 @@ const EditPage: React.FC = () => {
                   {...register("name", {
                     required: "Restaurant Name is Required",
                   })}
-                  className="input-style w-[400px]"
+                  className="input-style"
                   id="name"
                 />
                 {errors.name && (
@@ -300,7 +300,7 @@ const EditPage: React.FC = () => {
                   {...register("location", {
                     required: "Restaurant location is Required",
                   })}
-                  className="input-style w-[400px]"
+                  className="input-style"
                   id="location"
                 />
                 {errors.location && (
@@ -525,7 +525,7 @@ const EditPage: React.FC = () => {
           <div className="pt-6 flex gap-4">
             <button
               disabled={isSubmitting}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow cursor-pointer hover:scale-105 transition-all ease-in-out duration-300"
+              className="bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 px-6 rounded-lg shadow cursor-pointer hover:scale-105 transition-all ease-in-out duration-300"
             >
               Update
             </button>

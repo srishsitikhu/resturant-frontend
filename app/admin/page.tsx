@@ -1,4 +1,5 @@
 "use client";
+import BigSpinner from "@/components/BigSpinner";
 import { showNotification } from "@/redux/NotificationSlice";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -51,9 +52,8 @@ const LoginPage = () => {
       setError("password", { message: error.response.data.error });
     }
   };
-
-  const router = useRouter();
-  return (
+const router = useRouter();
+return (
     <section className="my-20 max-w-[500px] min-w-[500px] m-auto px-4">
       <form
         onSubmit={handleSubmit(onSubmit)}

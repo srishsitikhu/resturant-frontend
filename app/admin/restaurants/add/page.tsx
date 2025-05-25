@@ -37,7 +37,7 @@ const AddPage: React.FC = () => {
     register,
     setError,
     reset,
-    formState: { errors,isSubmitting },
+    formState: { errors, isSubmitting },
     handleSubmit,
     watch,
   } = useForm({ mode: "onChange" });
@@ -212,7 +212,7 @@ const AddPage: React.FC = () => {
   const [rating, setRating] = useState<number>(0);
 
   return (
-    <div className="min-h-screen bg-gray-100 py-20">
+    <div className="min-h-screen w-full bg-gray-100 py-10   ">
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-lg space-y-10">
         <h1 className="text-3xl font-bold text-gray-800">Add New Restaurant</h1>
 
@@ -221,7 +221,7 @@ const AddPage: React.FC = () => {
             <h2 className="text-xl font-semibold text-gray-700 mb-4">
               Basic Information
             </h2>
-            <div className="flex flex-col laptop:flex-row justify-between gap-6">
+            <div className="flex justify-between gap-6">
               <div>
                 <label
                   htmlFor="name"
@@ -234,7 +234,7 @@ const AddPage: React.FC = () => {
                   {...register("name", {
                     required: "Restaurant Name is Required",
                   })}
-                  className="input-style laptop:w-[400px] w-full"
+                  className="input-style w-[400px]"
                   id="name"
                 />
                 {errors.name && (
@@ -255,7 +255,7 @@ const AddPage: React.FC = () => {
                   {...register("location", {
                     required: "Restaurant location is Required",
                   })}
-                  className="input-style laptop:w-[400px] w-full"
+                  className="input-style w-[400px]"
                   id="location"
                 />
                 {errors.location && (
@@ -436,7 +436,7 @@ const AddPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-row gap-4 items-center">
+                <div className="flex flex-col md:flex-row gap-4 items-center">
                   <div className="flex flex-col gap-2">
                     <label htmlFor="menuImage">Menu Image</label>
                     <input
@@ -473,7 +473,7 @@ const AddPage: React.FC = () => {
           </div>
 
           <div className="pt-6 flex gap-4">
-            <button className="bg-amber-600 cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 hover:bg-amber-700 text-white font-semibold py-2 px-6 rounded-lg shadow">
+            <button className="bg-blue-600 cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow">
               Submit
             </button>
             {isSubmitting && <SmallSpinner />}

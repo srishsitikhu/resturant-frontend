@@ -34,19 +34,19 @@ const Contactpage: React.FC = () => {
 
   const onSubmit: SubmitHandler<ContactFormInputs> = async (data) => {
     try {
-      // You can change this URL to your backend API endpoint
       const response = await axios.post(
-        ` ${process.env.NEXT_PUBLIC_SERVER_URL}/api/contacts`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/contacts`,
         data
       );
 
-dispatch(
+      dispatch(
         showNotification({
           message: "Contact Delivered Successfully",
           type: "success",
         })
       );
-      router.push("/")
+
+      router.push("/");
       reset();
     } catch (error) {
       console.error("Failed to send message", error);
@@ -55,16 +55,16 @@ dispatch(
   };
 
   return (
-    <section className="my-10 max-w-[80%] m-auto">
-      <div className="container flex flex-col items-center gap-6">
+    <section className="my-14 max-w-[80%] mx-10 laptop:mx-40">
+      <div className="flex flex-col items-center gap-8">
         <div className="flex flex-col items-center px-4 py-2 gap-4">
           <h1 className="main-heading">Contact Us</h1>
           <p>We'd love to hear from you. Get in touch with us!</p>
         </div>
 
-        <div className="grid grid-cols-2 grid-rows-3 gap-[30px]">
+        <div className="flex laptop:flex-row flex-col gap-[30px] w-full">
           {/* Contact Details */}
-          <div className="row-span-2 col-span-1 shadow-xl py-3 px-6 flex flex-col gap-4">
+          <div className="shadow-xl py-3 px-6 flex flex-col gap-4 basis-[30%]">
             <h2 className="sub-heading">Get in Touch</h2>
 
             <div className="flex items-start gap-2">
@@ -104,20 +104,8 @@ dispatch(
             </div>
           </div>
 
-          {/* Quick Help */}
-          <div className="row-span-1 col-span-1 row-start-3 shadow-xl py-3 px-6 flex flex-col gap-4">
-            <h1 className="sub-heading">Quick Help</h1>
-            <p>
-              Find quick answers to frequently asked questions about our
-              services.
-            </p>
-            <button className="border hover:scale-105 transition-all ease-in-out duration-300 px-4 py-2 cursor-pointer w-fit">
-              Visit FAQ Page
-            </button>
-          </div>
-
           {/* Contact Form */}
-          <div className="row-span-3 col-start-2 shadow-xl py-3 px-6 flex flex-col gap-4">
+          <div className="shadow-xl py-3 px-6 flex flex-col gap-4 basis-[70%]">
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="flex flex-col gap-4"
