@@ -51,10 +51,10 @@ const RegisterPage = () => {
     }
   };
   return (
-    <section className="my-20 laptop:max-w-[500px] laptop:min-w-[500px] laptop:m-auto px-2 laptop:px-4">
+    <section className="py-20 laptop:max-w-[500px] laptop:min-w-[500px] laptop:m-auto px-2 laptop:px-4">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="container shadow-xl flex flex-col gap-4 py-8"
+        className="container rounded-md shadow-xl flex flex-col gap-4 py-8"
       >
         <h1 className="heading text-center">Create an Account</h1>
         <div className="relative flex flex-col">
