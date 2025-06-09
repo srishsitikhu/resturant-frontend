@@ -89,6 +89,14 @@ useEffect(() => {
     setToken(false);
   };
 
+  useEffect(() => {
+    router.prefetch("/restaurants/add");
+    router.prefetch("/auth/login");
+    router.prefetch("/auth/register");
+    router.prefetch("/about");
+    router.prefetch("/contact");
+  },[router]);
+
   return (
     <header
       className={`fixed top-0 right-0 z-30 w-screen transition-all duration-300 ${
