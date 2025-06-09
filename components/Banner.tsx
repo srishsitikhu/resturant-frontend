@@ -11,8 +11,20 @@ const Banner = () => {
   const [location, setlocation] = useState("");
   const [isModelOpen, setIsModelOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
+  useEffect(()=>{
+    router.prefetch("/restaurants/search");
+    router.prefetch("/restaurants");
+  },[])
+  const handleSearch = () =>{
+    setIsLoading(true);
+    router.push(
+      `/restaurants/search?search=${search}&cuisineType=${cuisineType}&location=${location}`
+    );
+
+  }
 
   const fetchRestaurants = async () => {
     const { data } = await axios.get(
@@ -122,15 +134,14 @@ const Banner = () => {
 
                   {/* Search button */}
                   <button
+                    disabled={isLoading}
                     type="button"
                     className="inline-flex cursor-pointer hover:scale-105 transition-all ease-in-out duration-300 items-center justify-center font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed bg-amber-600 text-white hover:bg-amber-700 focus:ring-amber-500 text-base py-2 px-4 md:self-end"
-                    onClick={() =>
-                      router.push(
-                        `/restaurants/search?search=${search}&cuisineType=${cuisineType}&location=${location}`
-                      )
-                    }
+                    onClick={() => {
+                      handleSearch();
+                    }}
                   >
-                    Search
+                    {isLoading ? "Searching..." : "Search"}
                   </button>
                 </div>
               </form>

@@ -38,8 +38,15 @@ export function middleware(req: NextRequest) {
         }
     }
 
+    if(token && isAdmin && isAuthRoute){
+        return NextResponse.redirect(new URL("/admin/users", req.url));
+    }
+
     if (token && isAuthRoute) {
         return NextResponse.redirect(new URL("/", req.url));
+    }
+    if(token && isAdmin && !isAdminRoute){
+        return NextResponse.redirect(new URL("/admin/users", req.url));
     }
 
     if (!token && (isLoggedUserRoute || isAdminRoute)) {

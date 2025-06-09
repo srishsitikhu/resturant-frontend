@@ -1,41 +1,14 @@
-"use client";
-import BigSpinner from "@/components/BigSpinner";
-import RestaurantCard, { RestaurantProps } from "@/components/RestaurantCard";
-import RestaurantRail from "@/components/RestaurantRail";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { useParams, useSearchParams } from "next/navigation";
-import React from "react";
+// app/restaurants/search/page.tsx
 
-const SearchPage = () => {
-  const searchParams = useSearchParams();
+import React, { Suspense } from "react";
+import SearchPageClient from "./SearchPageClient";
 
-  const search = searchParams.get("search") || "";
-  const cuisineType = searchParams.get("cuisineType") || "";
-  const location = searchParams.get("location") || "";
-  const fetchRestaurants = async () => {
-    const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/restaurants?search=${search}&cuisineType=${cuisineType}&location=${location}`
-    );
-    console.log(data.restaurants);
-    return data.restaurants || [];
-  };
-  const { data: restaurants,isLoading } = useQuery<RestaurantProps[]>({
-    queryKey: ["restaurants", search, cuisineType, location],
-    queryFn: fetchRestaurants,
-  });
-  if (isLoading) return <BigSpinner />;
-
+const Page = () => {
   return (
-    <div className="container py-20">
-      <h1 className="heading pb-8">Search Results:</h1>
-      {restaurants ? (
-        <RestaurantRail restaurants={restaurants} />
-      ) : (
-        <div>No Search Results</div>
-      )}
-    </div>
+    <Suspense fallback={<div className="p-10">Loading search results...</div>}>
+      <SearchPageClient />
+    </Suspense>
   );
 };
 
-export default SearchPage;
+export default Page;

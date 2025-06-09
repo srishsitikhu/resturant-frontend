@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { FaDollarSign } from "react-icons/fa";
 
 interface MenuItem {
@@ -12,10 +12,10 @@ interface MenuSectionProps {
   items: MenuItem[];
 }
 
-const MenuSection: React.FC<MenuSectionProps> = ({ items }) => (
-  <div className="mb-6 last:mb-0">
-    <div className="space-y-4">
-      {items.map((item, idx) => (
+const MenuSection: React.FC<MenuSectionProps> = ({ items }) => {
+  const renderedItems = useMemo(
+    () =>
+      items.map((item, idx) => (
         <div className="flex justify-between items-start gap-4" key={idx}>
           {/* Image */}
           <img
@@ -27,7 +27,9 @@ const MenuSection: React.FC<MenuSectionProps> = ({ items }) => (
           {/* Info */}
           <div className="flex-1">
             <h4 className="font-medium">{item.name}</h4>
-            <p className="text-gray-600 text-sm line-clamp-2">{item.description}</p>
+            <p className="text-gray-600 text-sm line-clamp-2">
+              {item.description}
+            </p>
           </div>
 
           {/* Price */}
@@ -36,9 +38,15 @@ const MenuSection: React.FC<MenuSectionProps> = ({ items }) => (
             {item.price}
           </div>
         </div>
-      ))}
+      )),
+    [items]
+  );
+
+  return (
+    <div className="mb-6 last:mb-0">
+      <div className="space-y-4">{renderedItems}</div>
     </div>
-  </div>
-);
+  );
+};
 
 export default MenuSection;
